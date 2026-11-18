@@ -40,7 +40,8 @@ ul{list-style:none}
 #cur span{color:#fff;font-size:clamp(40px,6vw,88px);opacity:0}
 
 /* cursor */
-#cd,#cr{position:fixed;left:0;top:0;pointer-events:none;z-index:95;border-radius:50%;transform:translate(-50%,-50%)}
+#cd,#cr{position:fixed;left:0;top:0;pointer-events:none;z-index:95;border-radius:50%;transform:translate(-50%,-50%);opacity:0;transition:opacity .4s}
+body.cur-on #cd,body.cur-on #cr{opacity:1}
 #cd{width:6px;height:6px;background:var(--navy);mix-blend-mode:normal}
 #cr{width:40px;height:40px;border:1px solid var(--navy);display:flex;align-items:center;justify-content:center;font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-weight:500;color:#fff;transition:width .45s var(--o),height .45s var(--o),background .45s,border-color .45s}
 #cr.big{width:96px;height:96px;background:var(--navy);border-color:var(--navy)}
@@ -770,7 +771,7 @@ var fine=window.matchMedia('(pointer:fine)').matches&&window.innerWidth>900;
 if(fine&&G){
  var cd=$('#cd'),cr=$('#cr');
  var xd=G.quickTo(cd,'x',{duration:.12}),yd=G.quickTo(cd,'y',{duration:.12}),xr=G.quickTo(cr,'x',{duration:.5,ease:'power3'}),yr=G.quickTo(cr,'y',{duration:.5,ease:'power3'});
- window.addEventListener('mousemove',function(e){xd(e.clientX);yd(e.clientY);xr(e.clientX);yr(e.clientY)});
+ window.addEventListener('mousemove',function(e){document.body.classList.add('cur-on');xd(e.clientX);yd(e.clientY);xr(e.clientX);yr(e.clientY)});
  document.addEventListener('mouseover',function(e){
   var t=e.target.closest('[data-cur]'),l=e.target.closest('a,button,summary,input,textarea'),d=e.target.closest('.ondark,#lb,#mm');
   cr.classList.toggle('big',!!t);cr.textContent=t?t.getAttribute('data-cur'):'';
