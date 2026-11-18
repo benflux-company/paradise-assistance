@@ -15,7 +15,7 @@
 html.lenis,html.lenis body{height:auto}
 .lenis.lenis-smooth{scroll-behavior:auto!important}
 html{overflow-x:hidden;overflow-x:clip}
-body{overflow-x:clip;background:var(--white);color:var(--char);font-family:'Poppins',system-ui,sans-serif;font-weight:300;-webkit-font-smoothing:antialiased;line-height:1.6;overflow-x:hidden}
+body{overflow-x:clip;background:var(--white);color:var(--char);font-family:'Poppins',system-ui,sans-serif;font-weight:300;-webkit-font-smoothing:antialiased;line-height:1.6}
 a{color:inherit;text-decoration:none}
 img{display:block;max-width:100%}
 button,input,textarea{font:inherit;color:inherit}
@@ -381,8 +381,10 @@ body.mo #mm{pointer-events:auto}
 .hz .top{padding-top:96px}
 .hz-end{width:100%}
 .proc{grid-template-columns:1fr;gap:0}
-.proc .stk{display:none}
-.step{min-height:auto;opacity:1}
+.proc .stk{position:sticky;top:84px;height:44vh;height:44svh;max-height:none;z-index:2;margin-bottom:8px}
+.proc .stk .pn{left:12px;bottom:12px;font-size:11px;padding:8px 12px}
+.step{min-height:62vh;min-height:62svh;justify-content:flex-start;padding:36px 0 48px;position:relative;z-index:1}
+.step .k{font-size:72px}
 .bgrid{grid-template-columns:1fr}
 .pgrid{grid-template-columns:1fr;gap:48px}
 .pitem,.pitem.wide{grid-column:auto}
@@ -981,7 +983,7 @@ function homeAnims(){
  // process sticky
  var pis=$$('#stk .pi');pis.active=0;pis.forEach(function(p,j){G.set(p,{clipPath:'inset(0% 0 0 0)',zIndex:j===0?3:0})});
  $$('.step').forEach(function(st,k){
-  ST.create({trigger:st,start:'top 55%',end:'bottom 55%',onToggle:function(s){if(!s.isActive||pis.active===k)return;var prev=pis.active;pis.active=k;$$('.step').forEach(function(x){x.classList.toggle('on',x===st)});$('#pn').textContent='ÉTAPE '+pad(k+1)+' / 04';pis.forEach(function(p,j){G.set(p,{zIndex:j===k?3:(j===prev?2:1)})});var p=pis[k];G.fromTo(p,{clipPath:'inset(100% 0 0 0)'},{clipPath:'inset(0% 0 0 0)',duration:1.1,ease:'expo.inOut'});G.fromTo($('img',p),{scale:1.3},{scale:1,duration:1.6,ease:'expo.out'})}});
+  ST.create({trigger:st,start:TOUCH?'top 80%':'top 55%',end:TOUCH?'bottom 80%':'bottom 55%',onToggle:function(s){if(!s.isActive||pis.active===k)return;var prev=pis.active;pis.active=k;$$('.step').forEach(function(x){x.classList.toggle('on',x===st)});$('#pn').textContent='ÉTAPE '+pad(k+1)+' / 04';pis.forEach(function(p,j){G.set(p,{zIndex:j===k?3:(j===prev?2:1)})});var p=pis[k];G.fromTo(p,{clipPath:'inset(100% 0 0 0)'},{clipPath:'inset(0% 0 0 0)',duration:1.1,ease:'expo.inOut'});G.fromTo($('img',p),{scale:1.3},{scale:1,duration:1.6,ease:'expo.out'})}});
  });
 }
 function sharedAnims(){
