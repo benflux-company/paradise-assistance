@@ -72,7 +72,7 @@ body.cur-on #cd,body.cur-on #cr{opacity:1}
 body.mo .burger i:first-child{transform:translateY(3px) rotate(45deg)}body.mo .burger i:last-child{transform:translateY(-3px) rotate(-45deg)}
 
 /* buttons */
-.btn{position:relative;display:inline-flex;align-items:center;gap:14px;height:54px;padding:0 30px;border-radius:999px;border:1px solid currentColor;font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-weight:500;overflow:hidden;isolation:isolate;cursor:pointer;background:transparent;transition:color .6s var(--o),border-color .6s}
+.btn{white-space:nowrap;position:relative;display:inline-flex;align-items:center;gap:14px;height:54px;padding:0 30px;border-radius:999px;border:1px solid currentColor;font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-weight:500;overflow:hidden;isolation:isolate;cursor:pointer;background:transparent;transition:color .6s var(--o),border-color .6s}
 .btn::before{content:'';position:absolute;left:-10%;right:-10%;top:100%;height:220%;border-radius:50%;background:var(--navy);transition:top .7s var(--o);z-index:-1}
 .btn:hover{color:#fff;border-color:var(--navy)}.btn:hover::before{top:-60%}
 .btn.fill{background:var(--navy);color:#fff;border-color:var(--navy)}.btn.fill::before{background:var(--char)}
@@ -135,17 +135,23 @@ body.mo #mm{pointer-events:auto}
 
 /* horizontal */
 .hz{background:var(--navy);color:#fff;overflow:hidden}
-.hz .top{display:flex;justify-content:space-between;align-items:flex-end;gap:32px;flex-wrap:wrap;padding-top:140px;padding-bottom:64px}
+.hz .top{display:flex;justify-content:space-between;align-items:flex-end;gap:32px;flex-wrap:wrap;padding-top:112px;padding-bottom:28px}
+.hz .top .h2{font-size:clamp(40px,4vw,64px);margin-top:14px!important}
+.hz .top p{font-size:14px!important;line-height:1.7!important}
+.hz .top .h2 .ln{display:inline-block;margin-right:.25em}
 .hz .h2 em{color:var(--lav)}
-.track{display:flex;gap:36px;padding:0 56px 140px;width:max-content}
-.hcard{width:clamp(300px,34vw,520px);flex:0 0 auto;display:block;cursor:pointer;background:none;border:0;text-align:left;color:#fff}
-.hcard:nth-child(even){margin-top:90px}
-.hcard .im{aspect-ratio:4/5;overflow:hidden;position:relative}
+.track{display:flex;gap:36px;padding:0 56px 32px;width:max-content;align-items:flex-start}
+.hcard{--ih:clamp(220px,calc(100vh - 400px),600px);width:max(300px,calc(var(--ih) * 1.12));flex:0 0 auto;display:block;cursor:pointer;background:none;border:0;text-align:left;color:#fff}
+.hcard .im{height:var(--ih);overflow:hidden;position:relative}
+.pbadge{position:absolute;right:14px;top:14px;z-index:2;background:#fff;color:var(--navy);font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-weight:500;padding:7px 12px}
 .hcard .im img{width:100%;height:100%;object-fit:cover;transition:transform 1.4s var(--o)}
 .hcard:hover .im img{transform:scale(1.08)}
-.hcard .row{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-top:22px;padding-top:18px;border-top:1px solid rgba(255,255,255,.22)}
-.hcard h3{font-size:34px;line-height:1.08;font-weight:300}
-.hcard .c{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--lav);margin-top:8px}
+.hcard .row{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-top:18px}
+.hcard h3{font-size:clamp(24px,2vw,30px);line-height:1.15;font-weight:300;margin-top:6px}
+.hcard .s{font-size:13px;line-height:1.6;color:rgba(255,255,255,.72);margin-top:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.hcard .go{flex:0 0 auto;width:46px;height:46px;border-radius:50%;border:1px solid rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center;transition:background .4s,color .4s,transform .6s var(--o)}
+.hcard:hover .go{background:#fff;color:var(--navy);transform:rotate(-45deg)}
+.hcard .c{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--lav)}
 .hcard .n{font-size:12px;letter-spacing:.2em;color:var(--lav)}
 .hz-end{width:clamp(280px,26vw,400px);flex:0 0 auto;display:flex;flex-direction:column;justify-content:center;gap:28px}
 
@@ -239,6 +245,8 @@ body.mo #mm{pointer-events:auto}
 .pitem .row{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-top:20px}
 .pitem h3{font-size:30px;font-weight:400;line-height:1.1}
 .pitem .c{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+.pitem .s{font-size:14px;line-height:1.6;color:var(--muted);margin-top:10px;max-width:440px}
+.pgrid.list .pitem .s{display:none}
 .pitem .n{font-size:12px;letter-spacing:.2em;color:var(--muted)}
 .pgrid.list{grid-template-columns:1fr;gap:0}
 .pgrid.list .pitem{grid-column:auto;display:grid;grid-template-columns:200px 1fr auto;gap:40px;align-items:center;padding:24px 0;border-bottom:1px solid var(--line)}
@@ -377,7 +385,7 @@ body.mo #mm{pointer-events:auto}
 .hctl .trk{width:80px}
 .sec{padding:96px 0}
 .track{flex-direction:column;width:auto;padding:0 24px 96px;gap:56px}
-.hcard{width:100%}.hcard:nth-child(even){margin-top:0}
+.hcard{width:100%}.hcard .im{height:auto;aspect-ratio:4/5}
 .hz .top{padding-top:96px}
 .hz-end{width:100%}
 .proc{grid-template-columns:1fr;gap:0}
@@ -686,7 +694,7 @@ body.mo #mm{pointer-events:auto}
 <div class="cnt" id="lbn">01 / 12</div>
 <div><div class="lab c" id="lbc"></div><h3 class="sf" id="lbt" style="margin-top:14px"></h3></div>
 <p id="lbd"></p>
-<div class="th" id="lbth"></div>
+<div><div class="lab" id="lbpc" style="color:var(--lav);margin-bottom:12px"></div><div class="th" id="lbth"></div></div>
 <div class="nv">
 <button class="arr" type="button" id="lbp" aria-label="Projet précédent"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M20 12H5M11 6l-6 6 6 6"/></svg></button>
 <button class="arr" type="button" id="lbx2" aria-label="Projet suivant"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button>
@@ -710,19 +718,21 @@ var ARW='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="cur
 
 /* ---------- data ---------- */
 var P=[
-{i:'cuisine-marbre',t:'Cuisine, îlot en marbre',c:'Cuisines',a:'Cuisine blanche avec îlot en marbre et suspensions dorées',d:'Façades blanches, îlot habillé de marbre et suspensions dorées au-dessus du plan de travail.',w:1},
-{i:'tv-noir',t:'Mur TV, lamelles noires',c:'Murs TV',a:'Mur TV en lamelles noires avec panneau laqué blanc',d:'Habillage en lamelles noires, panneau laqué blanc et meuble suspendu à tiroirs.'},
-{i:'dressing-eclaire',t:'Dressing éclairé',c:'Dressings',a:'Dressing aux étagères en bois éclairées',d:'Étagères en bois, tiroirs à coulisses et éclairage LED intégré aux montants.'},
-{i:'cuisine-niche',t:'Colonnes et niche en bois',c:'Cuisines',a:'Colonnes blanches de cuisine avec niche en bois',d:'Colonnes blanches intégrant les fours, vitrine éclairée et niche en bois à lamelles.'},
-{i:'tv-marbre',t:'Mur TV, effet marbre',c:'Murs TV',a:'Mur TV avec panneau effet marbre et LED bleue',d:'Panneau effet marbre encadré de lamelles, avec éclairage LED indirect.',w:1},
-{i:'salle-de-bain',t:'Salle de bain, mosaïque',c:'Salles de bain',a:'Salle de bain avec mosaïque de verre et accessoires noirs',d:'Bande de mosaïque de verre, vasque posée et accessoires en métal noir.'},
-{i:'cuisine-cannele',t:'Îlot cannelé',c:'Cuisines',a:'Îlot de cuisine cannelé en marbre avec suspensions',d:'Îlot à façade cannelée effet marbre, suspensions en verre ambré.'},
-{i:'dressing-led',t:'Dressing, LED verticale',c:'Dressings',a:'Dressing avec éclairage LED vertical',d:'Portes laquées blanches et rubans LED verticaux dans les montants.'},
-{i:'tv-gris',t:'Mur TV, lamelles grises',c:'Murs TV',a:'Mur TV en lamelles grises avec LED bleue',d:'Lamelles grises, cadre blanc rétroéclairé et étagères flottantes.'},
-{i:'salon-bleu',t:'Salon capitonné',c:'Salons',a:'Salon aux fauteuils bleus capitonnés, plafond lumineux',d:'Faux plafond lumineux, murs gris et fauteuils capitonnés bleu nuit.',w:1},
-{i:'cuisine-dore',t:'Îlot et suspensions dorées',c:'Cuisines',a:'Cuisine avec îlot et suspensions dorées',d:'Îlot laqué, plaque gaz intégrée et suspensions en anneaux dorés.'},
-{i:'cuisine-cadre',t:'Cadre en bois et bar',c:'Cuisines',a:'Cuisine avec cadre en bois et bar',d:'Bar en quartz encadré de bois, rangement à verres et suspensions cuivrées.'}
+{i:'cuisine-marbre',t:'Cuisine, îlot en marbre',c:'Cuisines',a:'Cuisine blanche avec îlot en marbre et suspensions dorées',s:'Îlot en cascade effet marbre, façades blanches et laiton.',d:"Une cuisine blanche structurée autour d'un grand îlot en cascade effet marbre, prolongé par la crédence. Les meubles hauts vitrés sont éclairés de l'intérieur et les poignées en laiton répondent aux suspensions dorées.",w:1},
+{i:'tv-noir',t:'Mur TV, lamelles noires',c:'Murs TV',a:'Mur TV en lamelles noires avec panneau laqué blanc',s:'Lamelles noires, panneau laqué et meuble suspendu.',d:"Un mur TV pleine hauteur habillé de lamelles noires. Le panneau laqué blanc encadre l'écran et le long meuble suspendu à tiroirs cache les appareils et les câbles."},
+{i:'chantier-cuisine',g:['chantier-cuisine','chantier-cuisine-2','chantier-couloir'],t:'Cuisine sur mesure, en chantier',c:'Cuisines',a:"Cuisine sur mesure en cours d'installation par l'équipe",s:'Pose des caissons et habillage bois, sur place.',d:"Les coulisses d'une cuisine sur mesure : caissons blancs assemblés sur place, colonne habillée de bois et espace prévu pour les appareils encastrés. Le sol est protégé pendant toute la durée du chantier."},
+{i:'dressing-eclaire',t:'Dressing éclairé',c:'Dressings',a:'Dressing aux étagères en bois éclairées',s:'Étagères en bois, tiroirs et LED intégrée.',d:"Un dressing aux portes laquées blanches qui s'ouvre sur un intérieur en bois clair. Étagères réglables, tiroirs à coulisses et éclairage LED intégré aux montants pour bien voir chaque rangement."},
+{i:'cuisine-niche',t:'Colonnes et niche en bois',c:'Cuisines',a:'Colonnes blanches de cuisine avec niche en bois',s:'Colonnes four, vitrine éclairée et niche à lamelles.',d:"Un linéaire de colonnes blanches qui intègre les fours et une vitrine éclairée. Il se termine par une niche en bois à lamelles, avec étagères et spots, qui sert de bar et de décoration."},
+{i:'tv-marbre',t:'Mur TV, effet marbre',c:'Murs TV',a:'Mur TV avec panneau effet marbre et LED bleue',s:'Panneau effet marbre et éclairage indirect.',d:"Un grand panneau effet marbre posé sur un fond de lamelles, souligné par un éclairage LED indirect. Le meuble bas suspendu et la bibliothèque latérale complètent l'ensemble.",w:1},
+{i:'salle-de-bain',t:'Salle de bain, mosaïque',c:'Salles de bain',a:'Salle de bain avec mosaïque de verre et accessoires noirs',s:'Mosaïque de verre et accessoires en métal noir.',d:"Une bande verticale de mosaïque de verre met en valeur la vasque posée. Miroir rond, robinetterie et accessoires en métal noir sont assortis pour un ensemble cohérent."},
+{i:'cuisine-cannele',t:'Îlot cannelé',c:'Cuisines',a:'Îlot de cuisine cannelé en marbre avec suspensions',s:'Façade cannelée effet marbre, verre ambré.',d:"Un îlot à façade cannelée effet marbre, posé sur un socle sombre. Les suspensions en verre ambré et les vitrines éclairées donnent une ambiance chaleureuse à la cuisine."},
+{i:'dressing-led',t:'Dressing, LED verticale',c:'Dressings',a:'Dressing avec éclairage LED vertical',s:'Portes laquées et rubans LED dans les montants.',d:"Des portes laquées blanches sans poignée et, à l'intérieur, des rubans LED verticaux dans les montants qui éclairent les étagères en bois."},
+{i:'tv-gris',t:'Mur TV, lamelles grises',c:'Murs TV',a:'Mur TV en lamelles grises avec LED bleue',s:'Lamelles grises, cadre rétroéclairé, étagères.',d:"Des lamelles grises, un cadre blanc rétroéclairé autour de l'écran, des étagères flottantes et un meuble bas suspendu pour un salon épuré."},
+{i:'salon-bleu',t:'Salon capitonné',c:'Salons',a:'Salon aux fauteuils bleus capitonnés, plafond lumineux',s:'Plafond lumineux et fauteuils bleu nuit.',d:"Un faux plafond avec gorge lumineuse, des murs gris et des spots encastrés mettent en valeur les fauteuils capitonnés bleu nuit.",w:1},
+{i:'cuisine-dore',t:'Îlot et suspensions dorées',c:'Cuisines',a:'Cuisine avec îlot et suspensions dorées',s:'Îlot laqué, plaque gaz et anneaux dorés.',d:"Un îlot laqué avec plaque gaz intégrée, face au salon. Les suspensions en anneaux dorés et les poignées assorties apportent une touche chaude."},
+{i:'cuisine-cadre',t:'Cadre en bois et bar',c:'Cuisines',a:'Cuisine avec cadre en bois et bar',s:'Bar en quartz encadré de bois.',d:"Une cuisine ouverte délimitée par un cadre en bois. Le bar en quartz accueille deux tabourets, un porte-verres central et trois suspensions cuivrées."}
 ];
+P.forEach(function(p){if(!p.g)p.g=[p.i]});
 var B=[
 {id:1,i:'tv-noir',c:'Conseils',t:'Mur TV en lamelles : comment il se construit',e:"De l'ossature aux lamelles, en passant par le panneau laqué et l'éclairage LED."},
 {id:2,i:'cuisine-marbre',c:'Conseils',t:'Laqué brillant ou mat : quelle finition choisir ?',e:"Les critères pour trancher selon l'usage, la lumière et l'entretien."},
@@ -750,7 +760,7 @@ var STEPS=[
 var img=function(n){return 'img/'+n+'.jpg'};
 
 /* ---------- build: home ---------- */
-$('#track').innerHTML=P.slice(0,6).map(function(p,k){var idx=P.indexOf(p);return '<button type="button" class="hcard" data-lb="'+idx+'" data-cur="Voir"><div class="im"><img src="'+img(p.i)+'" alt="'+p.a+'" loading="lazy"></div><div class="row"><div><h3 class="sf">'+p.t+'</h3><div class="c">'+p.c+'</div></div><span class="n">'+pad(k+1)+'</span></div></button>'}).join('')+'<div class="hz-end"><p class="sf" style="font-size:44px;line-height:1.1">Et bien d\'autres réalisations à découvrir.</p><a href="#portfolio" class="btn wh mag" style="align-self:flex-start"><span class="t"><span>Tout le portfolio</span><span>Tout le portfolio</span></span>'+ARW+'</a></div>';
+$('#track').innerHTML=[0,1,2,3,4,5,6].map(function(idx,k){var p=P[idx];return '<button type="button" class="hcard" data-lb="'+idx+'" data-cur="Voir"><div class="im"><img src="'+img(p.i)+'" alt="'+p.a+'" loading="lazy">'+(p.g.length>1?'<span class="pbadge">'+p.g.length+' photos</span>':'')+'</div><div class="row"><div><div class="c">'+pad(k+1)+' &middot; '+p.c+'</div><h3 class="sf">'+p.t+'</h3><p class="s">'+p.s+'</p></div><span class="go">'+ARW+'</span></div></button>'}).join('')+'<div class="hz-end"><p class="sf" style="font-size:44px;line-height:1.1">Et bien d\'autres réalisations à découvrir.</p><a href="#portfolio" class="btn wh mag" style="align-self:flex-start"><span class="t"><span>Tout le portfolio</span><span>Tout le portfolio</span></span>'+ARW+'</a></div>';
 $('#slist').innerHTML=S.map(function(s,k){return '<a href="#services" class="sitem" data-img="'+img(s.i)+'"><span class="n">'+pad(k+1)+'</span><h3 class="sf">'+s.t+'</h3><p>'+s.s+'</p><span class="go">'+ARW+'</span></a>'}).join('');
 (function(){var w=['Cuisines','Dressings','Murs TV','Salons','Salles de bain','Sur mesure'],h='';for(var r=0;r<2;r++)w.forEach(function(x,k){h+='<span class="'+(k%2?'o':'')+'">'+x+'<b></b></span>'});$('#mq').innerHTML=h})();
 $('#stk').innerHTML=STEPS.map(function(s,k){return '<div class="pi'+(k===0?' on':'')+'"><img src="'+img(s.i)+'" alt="" loading="lazy"></div>'}).join('')+'<div class="pn" id="pn">ÉTAPE 01 / 04</div>';
@@ -842,7 +852,7 @@ var pf='Tous',view='grid',shown=[];
 var PC=['Tous','Cuisines','Murs TV','Dressings','Salons','Salles de bain'];
 function chips(host,list,cur,cb,cls){host.innerHTML=list.map(function(c){var n=c==='Tous'?'':'';return '<button type="button" class="'+(cls||'chip')+'" aria-pressed="'+(c===cur)+'" data-v="'+c+'">'+c+'</button>'}).join('');$$('button',host).forEach(function(b){b.onclick=function(){cb(b.getAttribute('data-v'))}})}
 function buildPort(){
- $('#pgrid').innerHTML=P.map(function(p,k){return '<button type="button" class="pitem'+(p.w?' wide':'')+'" data-lb="'+k+'" data-c="'+p.c+'" data-cur="Voir"><div class="im"><img src="'+img(p.i)+'" alt="'+p.a+'" loading="lazy"><div class="hv"><span>Agrandir</span></div></div><div class="row"><div><h3 class="sf">'+p.t+'</h3><div class="c">'+p.c+'</div></div><span class="n">'+pad(k+1)+'</span></div></button>'}).join('');
+ $('#pgrid').innerHTML=P.map(function(p,k){return '<button type="button" class="pitem'+(p.w?' wide':'')+'" data-lb="'+k+'" data-c="'+p.c+'" data-cur="Voir"><div class="im"><img src="'+img(p.i)+'" alt="'+p.a+'" loading="lazy"><div class="hv"><span>Voir le projet</span></div>'+(p.g.length>1?'<span class="pbadge">'+p.g.length+' photos</span>':'')+'</div><div class="row"><div><h3 class="sf">'+p.t+'</h3><div class="c">'+p.c+'</div><p class="s">'+p.s+'</p></div><span class="n">'+pad(k+1)+'</span></div></button>'}).join('');
  applyPort(false);
 }
 function applyPort(anim){
@@ -891,16 +901,28 @@ $('#again').onclick=function(){$('#cf').reset();$('#done').hidden=true;$('#cf').
 
 /* ---------- lightbox ---------- */
 var lbi=-1,lbList=[],lbLast=null;
+var lbImg=0;
+function lbPhoto(j){var p=P[lbi];lbImg=j;var src=img(p.g[j]);
+ var sw=function(){$('#lbi').src=src;$('#lbi').alt=p.a+(p.g.length>1?' (photo '+(j+1)+')':'');};
+ if(OK){G.to('#lbi',{opacity:0,duration:.25,onComplete:function(){sw();G.to('#lbi',{opacity:1,duration:.5})}})}else sw();
+ $$('#lbth button').forEach(function(b,x){b.setAttribute('aria-current',x===j)});
+ $('#lbpc').textContent=p.g.length>1?'Photo '+(j+1)+' / '+p.g.length:'';
+}
 function lbShow(k,dir){
- lbi=k;var p=P[k],pos=lbList.indexOf(k);
- var set=function(){$('#lbi').src=img(p.i);$('#lbi').alt=p.a;$('#lbt').textContent=p.t;$('#lbc').textContent=p.c;$('#lbd').textContent=p.d;$('#lbn').textContent=pad(pos+1)+' / '+pad(lbList.length);$$('#lbth button').forEach(function(b){var on=+b.getAttribute('data-k')===k;b.setAttribute('aria-current',on);if(on){var th=$('#lbth');th.scrollTo({left:b.offsetLeft-th.clientWidth/2+b.clientWidth/2,behavior:'smooth'})}})};
+ lbi=k;lbImg=0;var p=P[k],pos=lbList.indexOf(k);
+ var set=function(){
+  $('#lbi').src=img(p.g[0]);$('#lbi').alt=p.a;$('#lbt').textContent=p.t;$('#lbc').textContent=p.c;$('#lbd').textContent=p.d;
+  $('#lbn').textContent='Projet '+pad(pos+1)+' / '+pad(lbList.length);
+  $('#lbth').innerHTML=p.g.length>1?p.g.map(function(g,j){return '<button type="button" aria-label="Photo '+(j+1)+'" aria-current="'+(j===0)+'"><img src="'+img(g)+'" alt=""></button>'}).join(''):'';
+  $('#lbth').hidden=p.g.length<2;
+  $$('#lbth button').forEach(function(b,j){b.onclick=function(){lbPhoto(j)}});
+  $('#lbpc').textContent=p.g.length>1?'Photo 1 / '+p.g.length:'';
+ };
  if(OK&&dir){G.to('#lbi',{opacity:0,x:-40*dir,duration:.35,ease:'power2.in',onComplete:function(){set();G.fromTo('#lbi',{opacity:0,x:40*dir},{opacity:1,x:0,duration:.7,ease:'expo.out'})}});G.fromTo('#lbt,#lbd',{opacity:0,y:16},{opacity:1,y:0,duration:.7,delay:.3,stagger:.06,ease:'expo.out'})}else set();
 }
 function lbOpen(k){
  lbLast=document.activeElement;
  lbList=($('#p-portfolio').classList.contains('on')&&shown.length&&shown.indexOf(k)>-1)?shown.slice():P.map(function(_,i){return i});
- $('#lbth').innerHTML=lbList.map(function(i){return '<button type="button" data-k="'+i+'" aria-label="'+P[i].t+'"><img src="'+img(P[i].i)+'" alt=""></button>'}).join('');
- $$('#lbth button').forEach(function(b){b.onclick=function(){var t=+b.getAttribute('data-k');lbShow(t,lbList.indexOf(t)>lbList.indexOf(lbi)?1:-1)}});
  lbShow(k);$('#lb').classList.add('open');fltHide();if(window.__curState)window.__curState(null);if(lenis)lenis.stop();document.body.style.overflow='hidden';
  if(OK){G.fromTo('#lb',{clipPath:'inset(100% 0 0 0)'},{clipPath:'inset(0% 0 0 0)',duration:.9,ease:'expo.inOut'});G.fromTo('#lbi',{scale:1.15,opacity:0},{scale:1,opacity:1,duration:1.2,delay:.4,ease:'expo.out'});G.from('#lb .side > *',{opacity:0,y:24,stagger:.06,duration:.8,delay:.5,ease:'expo.out'})}
  $('#lbx').focus();
