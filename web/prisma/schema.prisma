@@ -1,0 +1,164 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ProjectCategory {
+  CUISINES
+  MURS_TV
+  DRESSINGS
+  SALONS
+  SALLES_DE_BAIN
+}
+
+enum PostCategory {
+  CONSEILS
+  CHANTIERS
+  INSPIRATIONS
+}
+
+enum RequestStatus {
+  NOUVEAU
+  EN_COURS
+  TRAITE
+  ARCHIVE
+}
+
+model AdminUser {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  name         String
+  passwordHash String
+  createdAt    DateTime  @default(now())
+  lastLoginAt  DateTime?
+}
+
+model Project {
+  id          String          @id @default(cuid())
+  title       String
+  slug        String          @unique
+  category    ProjectCategory
+  shortDesc   String
+  longDesc    String
+  featured    Boolean         @default(false)
+  wide        Boolean         @default(false)
+  order       Int             @default(0)
+  published   Boolean         @default(true)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  images      ProjectImage[]
+
+  @@index([order])
+  @@index([category])
+}
+
+model ProjectImage {
+  id        String  @id @default(cuid())
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  url       String
+  alt       String
+  order     Int     @default(0)
+  cover     Boolean @default(false)
+
+  @@index([projectId])
+}
+
+model Post {
+  id          String       @id @default(cuid())
+  title       String
+  slug        String       @unique
+  category    PostCategory
+  excerpt     String
+  content     String
+  coverImage  String
+  featured    Boolean      @default(false)
+  published   Boolean      @default(true)
+  publishedAt DateTime     @default(now())
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([category])
+  @@index([publishedAt])
+}
+
+model Service {
+  id        String   @id @default(cuid())
+  title     String
+  subtitle  String
+  description String
+  items     String[]
+  image     String
+  order     Int      @default(0)
+
+  @@index([order])
+}
+
+model Faq {
+  id       String @id @default(cuid())
+  question String
+  answer   String
+  order    Int    @default(0)
+
+  @@index([order])
+}
+
+model MethodStep {
+  id          String @id @default(cuid())
+  title       String
+  description String
+  image       String
+  order       Int    @default(0)
+
+  @@index([order])
+}
+
+model HeroSlide {
+  id      String @id @default(cuid())
+  image   String
+  alt     String
+  caption String
+  order   Int    @default(0)
+
+  @@index([order])
+}
+
+model Settings {
+  id               String   @id @default("settings")
+  phone            String   @default("")
+  email            String   @default("")
+  address          String   @default("")
+  hours            String   @default("")
+  facebook         String   @default("")
+  instagram        String   @default("")
+  tiktok           String   @default("")
+  whatsapp         String   @default("")
+  linkedin         String   @default("")
+  budgetRanges     String[]
+  projectTypes     String[]
+  mapEmbed         String   @default("")
+  contactEmail     String   @default("")
+  seoDefaultTitle  String   @default("")
+  seoDefaultDesc   String   @default("")
+  updatedAt        DateTime @updatedAt
+}
+
+model ContactRequest {
+  id          String        @id @default(cuid())
+  name        String
+  contact     String
+  projectType String
+  budget      String
+  message     String
+  status      RequestStatus @default(NOUVEAU)
+  note        String        @default("")
+  ipHash      String
+  createdAt   DateTime      @default(now())
+
+  @@index([status])
+  @@index([createdAt])
+}
