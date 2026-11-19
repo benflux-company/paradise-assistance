@@ -82,10 +82,13 @@ export default function HeroSlideManager({ initial, uploadsEnabled }: { initial:
     return (
       <div className="adm-form">
         <ImageField label="Image" value={d.image} onChange={(url) => onSet({ ...d, image: url })} uploadsEnabled={uploadsEnabled} />
-        <div className="adm-field">
-          <label>Vidéo (optionnel, URL)</label>
-          <input type="text" value={d.video} onChange={(e) => onSet({ ...d, video: e.target.value })} />
-        </div>
+        <ImageField
+          label="Vidéo (optionnel)"
+          value={d.video}
+          onChange={(url) => onSet({ ...d, video: url })}
+          uploadsEnabled={uploadsEnabled}
+          accept="video/*"
+        />
         <div className="adm-field">
           <label>Texte alternatif</label>
           <input type="text" value={d.alt} onChange={(e) => onSet({ ...d, alt: e.target.value })} />
