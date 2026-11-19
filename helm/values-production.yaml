@@ -1,0 +1,63 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/benflux-company/paradise-assistance
+  tag: initial
+  pullPolicy: Always
+
+service:
+  port: 80
+  targetPort: 3000
+
+ingress:
+  host: paradise.benfluxgroup.com
+
+healthCheck:
+  liveness: /api/health
+  readiness: /api/health?ready=1
+
+env:
+  NODE_ENV: production
+  APP_ENV: production
+  PORT: "3000"
+  PUBLIC_SITE_URL: https://paradise.benfluxgroup.com
+  # First-boot seed: set to "true" for the very first deploy of an empty
+  # database, then remove it — the seed upserts content, but must not run on
+  # every pod restart.
+  RUN_SEED: "true"
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 256Mi
+  limits:
+    cpu: "1"
+    memory: 768Mi
+
+postgres:
+  image: postgres:15-alpine
+  storage: 5Gi
+  resources:
+    requests:
+      cpu: 50m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  backup:
+    enabled: true
+    schedule: "0 3 * * *"
+    storage: 3Gi
+    retentionDays: 7
+
+resourceQuota:
+  requestsCpu: "1"
+  requestsMemory: 1Gi
+  limitsCpu: "3"
+  limitsMemory: 2560Mi
+
+limitRange:
+  defaultRequestCpu: 50m
+  defaultRequestMemory: 128Mi
+  defaultLimitCpu: 500m
+  defaultLimitMemory: 512Mi

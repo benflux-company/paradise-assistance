@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Chart.Name }}
+spec:
+  # Single replica: the database is in-namespace Postgres with a ReadWriteOnce
+  # PVC (see postgres.yaml) — two pods would race migrations on cold start.
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+    spec:
+      imagePullSecrets:
+        - name: ghcr-credentials
+      initContainers:
+        # Hold the pod until Postgres accepts connections, so the entrypoint's
+        # migration runner doesn't crash-loop on a cold start.
+        - name: wait-for-postgres
+          image: {{ .Values.postgres.image | default "postgres:15-alpine" }}
+          command:
+            - sh
+            - -c
+            - |
+              until pg_isready -h {{ .Chart.Name }}-postgres -U paradise -d paradise_assistance; do
+                echo "waiting for {{ .Chart.Name }}-postgres ..."
+                sleep 2
+              done
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 100m
+              memory: 64Mi
+      containers:
+        - name: app
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.targetPort }}
+          envFrom:
+            - secretRef:
+                name: {{ .Chart.Name }}-secrets
+          env:
+            {{- range $key, $val := .Values.env }}
+            - name: {{ $key }}
+              value: {{ $val | quote }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.healthCheck.readiness }}
+              port: {{ .Values.service.targetPort }}
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.healthCheck.liveness }}
+              port: {{ .Values.service.targetPort }}
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 4

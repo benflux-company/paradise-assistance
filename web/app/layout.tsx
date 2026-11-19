@@ -3,6 +3,13 @@ import Chrome from "@/components/chrome/Chrome";
 import { getProjects, getSettings } from "@/lib/queries";
 import "./globals.css";
 
+// Content is admin-editable (Prisma, not `fetch`) — static prerendering would
+// both fail at build time (no database reachable during the Docker build)
+// and go stale until a rebuild. Every request renders fresh server-side;
+// revalidateTag/revalidatePath wiring on the admin mutations (later step)
+// can reintroduce caching deliberately once writes trigger it.
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.PUBLIC_SITE_URL ?? "http://localhost:3000"),
   title: {

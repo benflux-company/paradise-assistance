@@ -1,0 +1,85 @@
+# In-namespace PostgreSQL, self-contained (not the shared cluster Postgres).
+# The connection string is DATABASE_URL in the SealedSecret; the password
+# there must match DB_PASSWORD (same secret), which this Deployment reads.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Chart.Name }}-postgres-pvc
+  namespace: {{ .Release.Namespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.postgres.storage | default "5Gi" }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}-postgres
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Chart.Name }}-postgres
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}-postgres
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}-postgres
+    spec:
+      containers:
+        - name: postgres
+          image: {{ .Values.postgres.image | default "postgres:15-alpine" }}
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: paradise_assistance
+            - name: POSTGRES_USER
+              value: paradise
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Chart.Name }}-secrets
+                  key: DB_PASSWORD
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "paradise", "-d", "paradise_assistance"]
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            exec:
+              command: ["pg_isready", "-U", "paradise", "-d", "paradise_assistance"]
+            initialDelaySeconds: 20
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 5
+          resources:
+            {{- toYaml .Values.postgres.resources | nindent 12 }}
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ .Chart.Name }}-postgres-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}-postgres
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    app: {{ .Chart.Name }}-postgres
+  ports:
+    - port: 5432
+      targetPort: 5432

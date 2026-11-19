@@ -19,9 +19,11 @@
     "marked": "^18.2.1",
     "next": "16.4.6",
     "nodemailer": "^10.6.0",
+    "pg": "^8.23.1",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "sharp": "^0.35.5",
+    "tsx": "^4.23.15",
     "zod": "^4.6.7"
   },
   "devDependencies": {
@@ -33,7 +35,6 @@
     "eslint": "^9",
     "eslint-config-next": "16.4.6",
     "prisma": "^6.19.3",
-    "tsx": "^4.23.15",
     "typescript": "^5"
   }
 }

@@ -1,0 +1,73 @@
+{{- if .Values.postgres.backup.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Chart.Name }}-postgres-backups-pvc
+  namespace: {{ .Release.Namespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.postgres.backup.storage | default "3Gi" }}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Chart.Name }}-postgres-backup
+  namespace: {{ .Release.Namespace }}
+spec:
+  schedule: {{ .Values.postgres.backup.schedule | default "0 3 * * *" | quote }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: pg-dump
+              image: {{ .Values.postgres.image | default "postgres:15-alpine" }}
+              env:
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Chart.Name }}-secrets
+                      key: DB_PASSWORD
+                - name: RETENTION_DAYS
+                  value: {{ .Values.postgres.backup.retentionDays | default 7 | quote }}
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -euo pipefail
+                  TS=$(date +%Y%m%d-%H%M%S)
+                  FILE="/backups/paradise_assistance-${TS}.sql.gz"
+                  DUMP_OK=0
+                  cleanup() { [ "$DUMP_OK" = "1" ] || rm -f "${FILE}"; }
+                  trap cleanup EXIT
+                  echo "Dumping paradise_assistance -> $FILE"
+                  pg_dump -h {{ .Chart.Name }}-postgres -U paradise -d paradise_assistance | gzip > "$FILE"
+                  # Integrity check on decompressed bytes, not file size — an empty
+                  # gzip stream is still ~20 non-zero bytes.
+                  BYTES=$(gunzip -c "${FILE}" | wc -c)
+                  if [ "$BYTES" -lt 100 ]; then
+                    echo "ECHEC : dump vide ou tronque (${BYTES} octets decompresses)." >&2
+                    exit 1
+                  fi
+                  echo "Dump verifie : ${BYTES} octets decompresses"
+                  DUMP_OK=1
+                  echo "Done: $(du -h "$FILE" | cut -f1)"
+                  echo "Pruning dumps older than ${RETENTION_DAYS} days"
+                  find /backups -name 'paradise_assistance-*.sql.gz' -mtime +${RETENTION_DAYS} -delete
+                  ls -lh /backups
+              volumeMounts:
+                - name: backups
+                  mountPath: /backups
+          volumes:
+            - name: backups
+              persistentVolumeClaim:
+                claimName: {{ .Chart.Name }}-postgres-backups-pvc
+{{- end }}
