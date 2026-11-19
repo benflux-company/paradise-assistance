@@ -1,14 +1,28 @@
+"use client";
+
+import { useRef } from "react";
+import { useReveal } from "@/hooks/useReveal";
+import Hero from "@/components/home/Hero";
+import IntroSection from "@/components/home/IntroSection";
+import HorizontalProjects from "@/components/home/HorizontalProjects";
+import ExpertiseList from "@/components/home/ExpertiseList";
+import Marquee from "@/components/home/Marquee";
+import ProcessSteps from "@/components/home/ProcessSteps";
+import BlogPreview from "@/components/home/BlogPreview";
+
 export default function AccueilPage() {
+  const mainRef = useRef<HTMLElement>(null);
+  useReveal(mainRef);
+
   return (
-    <main id="p-accueil" className="pg on" data-t="Accueil" data-dark="1">
-      <section className="hero ondark" aria-label="Présentation" style={{ display: "flex", alignItems: "center" }}>
-        <div className="wrap">
-          <h1 className="sf">
-            L&apos;art de vivre <em>chez soi.</em>
-          </h1>
-          <p style={{ marginTop: 24, maxWidth: 430 }}>Contenu de la page d&apos;accueil : étape suivante.</p>
-        </div>
-      </section>
+    <main id="p-accueil" className="pg on" data-t="Accueil" data-dark="1" ref={mainRef}>
+      <Hero />
+      <IntroSection />
+      <HorizontalProjects />
+      <ExpertiseList />
+      <Marquee />
+      <ProcessSteps />
+      <BlogPreview />
     </main>
   );
 }

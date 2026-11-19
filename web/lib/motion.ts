@@ -1,6 +1,15 @@
 import type Lenis from "lenis";
 
 let lenisInstance: Lenis | null = null;
+let navBusy = false;
+
+export function setNavBusy(v: boolean) {
+  navBusy = v;
+}
+
+export function isNavBusy(): boolean {
+  return navBusy;
+}
 
 export function setLenis(l: Lenis | null) {
   lenisInstance = l;

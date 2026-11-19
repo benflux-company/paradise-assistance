@@ -13,7 +13,7 @@ import Magnetic from "./Magnetic";
 import ProgressBar from "./ProgressBar";
 import { ensureGsap, gsap, ScrollTrigger } from "@/lib/gsap";
 import { labelFromPathname } from "@/lib/pageMeta";
-import { isReducedMotion, isTouchViewport, setLenis, scrollToTop } from "@/lib/motion";
+import { isReducedMotion, isTouchViewport, setLenis, setNavBusy, scrollToTop } from "@/lib/motion";
 
 export default function Chrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -26,6 +26,7 @@ export default function Chrome({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     ensureGsap();
+    if (isReducedMotion()) document.documentElement.classList.add("nog");
     let lenis: Lenis | null = null;
     if (!isReducedMotion() && !isTouchViewport()) {
       lenis = new Lenis({
@@ -51,12 +52,14 @@ export default function Chrome({ children }: { children: React.ReactNode }) {
       return;
     }
     busyRef.current = true;
+    setNavBusy(true);
     setMenuOpen(false);
     const cur = curRef.current;
     const span = curSpanRef.current;
     if (!cur || !span) {
       router.push(href);
       busyRef.current = false;
+      setNavBusy(false);
       return;
     }
     span.textContent = labelFromPathname(href);
@@ -64,6 +67,7 @@ export default function Chrome({ children }: { children: React.ReactNode }) {
       .timeline({
         onComplete: () => {
           busyRef.current = false;
+          setNavBusy(false);
         },
       })
       .set(cur, { transformOrigin: "bottom" })
