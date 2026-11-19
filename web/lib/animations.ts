@@ -1,15 +1,31 @@
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 
-export function setupPageReveal(scope: Element, touch: boolean): () => void {
-  const triggers: ScrollTrigger[] = [];
-
+// Immediate on-load reveal for .ph/.hero headers (data-split title lines
+// and data-hi elements) — matches the original's heads(scope).
+function runHeadReveal(scope: Element): () => void {
   const splitSpans = Array.from(scope.querySelectorAll<HTMLElement>("[data-split] .ln>span"));
   const hiEls = Array.from(scope.querySelectorAll<HTMLElement>("[data-hi]"));
-  gsap.set(splitSpans, { yPercent: 110 });
-  gsap.set(hiEls, { opacity: 0, y: 30 });
+  if (splitSpans.length) gsap.set(splitSpans, { yPercent: 110 });
+  if (hiEls.length) gsap.set(hiEls, { opacity: 0, y: 30 });
   const headSplitSpans = splitSpans.filter((s) => s.closest(".ph,.hero"));
-  const headTween = gsap.to(headSplitSpans, { yPercent: 0, duration: 1.4, stagger: 0.1, ease: "expo.out", delay: 0.15 });
-  const hiTween = gsap.to(hiEls, { opacity: 1, y: 0, duration: 1.2, stagger: 0.1, ease: "expo.out", delay: 0.5 });
+  const headTween = headSplitSpans.length
+    ? gsap.to(headSplitSpans, { yPercent: 0, duration: 1.4, stagger: 0.1, ease: "expo.out", delay: 0.15 })
+    : null;
+  const hiTween = hiEls.length
+    ? gsap.to(hiEls, { opacity: 1, y: 0, duration: 1.2, stagger: 0.1, ease: "expo.out", delay: 0.5 })
+    : null;
+
+  return () => {
+    headTween?.kill();
+    hiTween?.kill();
+  };
+}
+
+// Scroll-triggered reveal for everything else (data-split titles outside
+// .ph/.hero, data-up, .par, .phimg img, .bcard/.pitem, .sitem) — matches
+// the original's scrollAnims(scope).
+function runScrollReveal(scope: Element, touch: boolean): () => void {
+  const triggers: ScrollTrigger[] = [];
 
   scope.querySelectorAll<HTMLElement>("[data-split]").forEach((h) => {
     if (h.closest(".ph,.hero")) return;
@@ -94,9 +110,53 @@ export function setupPageReveal(scope: Element, touch: boolean): () => void {
     if (tw.scrollTrigger) triggers.push(tw.scrollTrigger);
   });
 
+  return () => triggers.forEach((t) => t.kill());
+}
+
+// Used by each page's <main> scope — matches the original's
+// `heads(sc); scrollAnims(sc);` pair run together on every page swap.
+export function setupPageReveal(scope: Element, touch: boolean): () => void {
+  const cleanupHead = runHeadReveal(scope);
+  const cleanupScroll = runScrollReveal(scope, touch);
   return () => {
-    triggers.forEach((t) => t.kill());
-    headTween.kill();
-    hiTween.kill();
+    cleanupHead();
+    cleanupScroll();
   };
+}
+
+// The CTA and footer are rendered once by the Chrome layout (shared across
+// routes), outside each page's own <main> scope, so they need their own
+// setup re-run on every navigation. The original only ever calls
+// scrollAnims() (not heads()) on these two — matches sharedAnims().
+export function setupSharedAnims(touch: boolean): () => void {
+  const cleanups: (() => void)[] = [];
+  const cta = document.getElementById("cta");
+  const ft = document.querySelector<HTMLElement>(".ft");
+
+  if (!touch && cta) {
+    const bg = cta.querySelector(".bg");
+    if (bg) {
+      const tw = gsap.fromTo(
+        bg,
+        { yPercent: -10 },
+        { yPercent: 10, ease: "none", scrollTrigger: { trigger: cta, start: "top bottom", end: "bottom top", scrub: true } }
+      );
+      cleanups.push(() => tw.scrollTrigger?.kill());
+    }
+  }
+  if (!touch && ft) {
+    const huge = ft.querySelector("#huge");
+    if (huge) {
+      const tw = gsap.fromTo(
+        huge,
+        { xPercent: 12 },
+        { xPercent: -6, ease: "none", scrollTrigger: { trigger: ft, start: "top bottom", end: "bottom bottom", scrub: true } }
+      );
+      cleanups.push(() => tw.scrollTrigger?.kill());
+    }
+  }
+  if (cta) cleanups.push(runScrollReveal(cta, touch));
+  if (ft) cleanups.push(runScrollReveal(ft, touch));
+
+  return () => cleanups.forEach((fn) => fn());
 }

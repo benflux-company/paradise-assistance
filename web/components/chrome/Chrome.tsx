@@ -11,7 +11,9 @@ import Preloader from "./Preloader";
 import Cursor from "./Cursor";
 import Magnetic from "./Magnetic";
 import ProgressBar from "./ProgressBar";
+import Lightbox from "@/components/Lightbox";
 import { ensureGsap, gsap, ScrollTrigger } from "@/lib/gsap";
+import { setupSharedAnims } from "@/lib/animations";
 import { labelFromPathname } from "@/lib/pageMeta";
 import { isReducedMotion, isTouchViewport, setLenis, setNavBusy, scrollToTop } from "@/lib/motion";
 
@@ -125,6 +127,12 @@ export default function Chrome({ children }: { children: React.ReactNode }) {
     return () => document.removeEventListener("keydown", onKey);
   }, [menuOpen]);
 
+  useEffect(() => {
+    if (isReducedMotion()) return;
+    ensureGsap();
+    return setupSharedAnims(isTouchViewport());
+  }, [pathname]);
+
   const isContact = pathname === "/contact";
 
   return (
@@ -142,6 +150,7 @@ export default function Chrome({ children }: { children: React.ReactNode }) {
       {children}
       <Cta hidden={isContact} />
       <Footer />
+      <Lightbox />
     </>
   );
 }

@@ -1,21 +1,23 @@
 import type { Metadata } from "next";
+import RevealMain from "@/components/RevealMain";
 import PageHead from "@/components/PageHead";
+import PortfolioGrid from "@/components/portfolio/PortfolioGrid";
 
-export const metadata: Metadata = { title: "Portfolio" };
+export const metadata: Metadata = {
+  title: "Portfolio",
+  description:
+    "Cuisines, murs TV, dressings et salles de bain. Chaque projet est dessiné, fabriqué et posé par notre équipe.",
+};
 
 export default function PortfolioPage() {
   return (
-    <main id="p-portfolio" className="pg on" data-t="Portfolio">
+    <RevealMain id="p-portfolio" dataT="Portfolio">
       <PageHead
         current="Portfolio"
         titleLines={["Nos", "réalisations"]}
         description="Cuisines, murs TV, dressings et salles de bain. Chaque projet est dessiné, fabriqué et posé par notre équipe. Cliquez sur une image pour l'ouvrir en grand."
       />
-      <section style={{ paddingBottom: 160 }}>
-        <div className="wrap">
-          <p>Grille du portfolio : étape suivante.</p>
-        </div>
-      </section>
-    </main>
+      <PortfolioGrid />
+    </RevealMain>
   );
 }
