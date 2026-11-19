@@ -13,11 +13,11 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.PUBLIC_SITE_URL ?? "http://localhost:3000"),
   title: {
-    default: "Ets Paradise Assistance — Architecture d'intérieur",
-    template: "%s — Ets Paradise Assistance",
+    default: "Ets Paradis Assistance — Architecture d'intérieur",
+    template: "%s — Ets Paradis Assistance",
   },
   description:
-    "Ets Paradise Assistance conçoit et réalise cuisines, dressings, murs TV et aménagements d'intérieur sur mesure.",
+    "Ets Paradis Assistance conçoit et réalise cuisines, dressings, murs TV et aménagements d'intérieur sur mesure.",
   icons: {
     icon: "/img/icone.png",
   },

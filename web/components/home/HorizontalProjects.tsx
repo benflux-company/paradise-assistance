@@ -8,6 +8,7 @@ import { pad } from "@/lib/data";
 import type { ProjectView } from "@/lib/queries";
 import Arrow from "@/components/icons/Arrow";
 import { openLightbox } from "@/lib/lightbox";
+import FadeImg from "@/components/FadeImg";
 
 export default function HorizontalProjects({ projects }: { projects: ProjectView[] }) {
   const sectionRef = useRef<HTMLElement>(null);
@@ -83,7 +84,7 @@ export default function HorizontalProjects({ projects }: { projects: ProjectView
             onClick={() => openLightbox(p.slug)}
           >
             <div className="im">
-              <img src={p.image} alt={p.alt} loading="lazy" />
+              <FadeImg src={p.image} alt={p.alt} loading="lazy" />
               {p.gallery.length > 1 && <span className="pbadge">{p.gallery.length} photos</span>}
             </div>
             <div className="row">

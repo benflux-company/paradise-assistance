@@ -34,8 +34,8 @@ export default function Header({
   return (
     <header id="hd" ref={hdRef}>
       <div className="wrap in">
-        <Link href="/" className="logo" aria-label="Ets Paradise Assistance, accueil">
-          <img className="m" src="/img/logo-marine.png" alt="Ets Paradise Assistance" />
+        <Link href="/" className="logo" aria-label="Ets Paradis Assistance, accueil">
+          <img className="m" src="/img/logo-marine.png" alt="Ets Paradis Assistance" />
           <img className="w" src="/img/logo-blanc.png" alt="" />
         </Link>
         <nav id="nav" aria-label="Navigation principale">

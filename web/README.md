@@ -1,4 +1,4 @@
-# Ets Paradise Assistance — site Next.js
+# Ets Paradis Assistance — site Next.js
 
 Migration du site vitrine statique (`index.html` à la racine du dépôt) vers
 Next.js, avec base de données, API et espace d'administration.

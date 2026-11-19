@@ -43,10 +43,15 @@ export default function ImageField({
         {value && <img src={value} alt="" style={{ width: 56, height: 56, objectFit: "cover", borderRadius: 8 }} />}
         <input type="text" value={value} onChange={(e) => onChange(e.target.value)} style={{ flex: 1 }} />
       </div>
-      <div>
+      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         <input ref={fileRef} type="file" accept="image/*" onChange={onUpload} disabled={!uploadsEnabled || busy} />
-        {!uploadsEnabled && <div className="hint">Import indisponible (CLOUDINARY_URL manquant) — collez une URL d&apos;image.</div>}
+        {busy && (
+          <span className="adm-spinner" aria-live="polite">
+            Import en cours…
+          </span>
+        )}
       </div>
+      {!uploadsEnabled && <div className="hint">Import indisponible (CLOUDINARY_URL manquant) — collez une URL d&apos;image.</div>}
     </div>
   );
 }

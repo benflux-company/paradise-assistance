@@ -1,6 +1,6 @@
 apiVersion: v2
 name: paradise-assistance
-description: Site Ets Paradise Assistance — architecture d'intérieur (Next.js + Prisma/PostgreSQL, CMS admin)
+description: Site Ets Paradis Assistance — architecture d'intérieur (Next.js + Prisma/PostgreSQL, CMS admin)
 type: application
 version: 0.1.0
 appVersion: "1.0.0"

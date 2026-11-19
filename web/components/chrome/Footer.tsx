@@ -16,7 +16,7 @@ export default function Footer({ settings }: { settings: SettingsView }) {
       <div className="wrap">
         <div className="grid">
           <div className="col">
-            <img src="/img/logo-blanc.png" alt="Ets Paradise Assistance" style={{ height: 130, width: "auto" }} />
+            <img src="/img/logo-blanc.png" alt="Ets Paradis Assistance" style={{ height: 130, width: "auto" }} />
           </div>
           <div className="col">
             <div className="h">Navigation</div>
@@ -53,10 +53,10 @@ export default function Footer({ settings }: { settings: SettingsView }) {
           </div>
         </div>
         <div className="huge sf" id="huge">
-          Paradise <em>Assistance</em>
+          Paradis <em>Assistance</em>
         </div>
         <div className="bot">
-          <span>© 2026 Ets Paradise Assistance. Tous droits réservés.</span>
+          <span>© 2026 Ets Paradis Assistance. Tous droits réservés.</span>
           <span>Mentions légales</span>
           <button className="totop" type="button" id="totop" aria-label="Retour en haut" onClick={() => scrollToTop(1.6)}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true">

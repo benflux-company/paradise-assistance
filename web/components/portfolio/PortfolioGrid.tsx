@@ -6,6 +6,7 @@ import { isReducedMotion } from "@/lib/motion";
 import { PROJECT_CATEGORIES, pad } from "@/lib/data";
 import type { ProjectView } from "@/lib/queries";
 import { openLightbox, setLightboxScope } from "@/lib/lightbox";
+import FadeImg from "@/components/FadeImg";
 
 type FlipMode = "filter" | "view";
 
@@ -116,7 +117,7 @@ export default function PortfolioGrid({ projects }: { projects: ProjectView[] })
               onClick={() => openLightbox(p.slug)}
             >
               <div className="im">
-                <img src={p.image} alt={p.alt} loading="lazy" />
+                <FadeImg src={p.image} alt={p.alt} loading="lazy" />
                 <div className="hv">
                   <span>Voir le projet</span>
                 </div>

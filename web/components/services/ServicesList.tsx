@@ -1,5 +1,6 @@
 import { pad } from "@/lib/data";
 import type { ServiceView } from "@/lib/queries";
+import FadeImg from "@/components/FadeImg";
 
 export default function ServicesList({ services }: { services: ServiceView[] }) {
   return (
@@ -25,7 +26,7 @@ export default function ServicesList({ services }: { services: ServiceView[] }) 
               </ul>
             </div>
             <div className="im par">
-              <img src={s.image} alt="" loading="lazy" />
+              <FadeImg src={s.image} alt="" loading="lazy" />
             </div>
           </article>
         ))}

@@ -46,7 +46,7 @@ export default function AdminNav({ userName }: { userName: string }) {
   return (
     <nav className="adm-side">
       <div className="adm-brand">
-        Paradise Assistance
+        Paradis Assistance
         <span>Administration</span>
       </div>
       <div className="adm-nav">

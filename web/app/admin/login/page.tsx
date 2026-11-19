@@ -39,7 +39,7 @@ function LoginForm() {
     <div className="adm-login">
       <div className="adm-login-card">
         <h1>Administration</h1>
-        <p className="sub">Ets Paradise Assistance</p>
+        <p className="sub">Ets Paradis Assistance</p>
         <form className="adm-form" onSubmit={onSubmit}>
           {error && <div className="adm-error">{error}</div>}
           <div className="adm-field">

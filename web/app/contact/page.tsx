@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import RevealMain from "@/components/RevealMain";
 import PageHead from "@/components/PageHead";
 import ContactForm from "@/components/contact/ContactForm";
+import FadeImg from "@/components/FadeImg";
 import { getSettings } from "@/lib/queries";
 import { getSiteContent } from "@/lib/siteContent";
 import { orPlaceholder } from "@/lib/placeholders";
@@ -47,7 +48,7 @@ export default async function ContactPage() {
       <section style={{ paddingBottom: 160 }}>
         <div className="wrap" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(380px,100%),1fr))", gap: 24 }}>
           <div className="par" style={{ height: 460 }}>
-            <img src={content.contact_bottom_image} alt="" loading="lazy" />
+            <FadeImg src={content.contact_bottom_image} alt="" loading="lazy" />
           </div>
           {settings.mapEmbed ? (
             <iframe

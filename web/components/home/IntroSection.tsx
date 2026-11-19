@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ensureGsap, gsap } from "@/lib/gsap";
 import { isReducedMotion } from "@/lib/motion";
 import Arrow from "@/components/icons/Arrow";
+import FadeImg from "@/components/FadeImg";
 
 export default function IntroSection({
   label,
@@ -52,11 +53,11 @@ export default function IntroSection({
           </p>
           <div className="pic">
             <div className="par" style={{ flex: 1.3, aspectRatio: "4/5" }}>
-              <img src={image1} alt="" loading="lazy" />
+              <FadeImg src={image1} alt="" loading="lazy" />
             </div>
             <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 28 }}>
               <div className="par" style={{ aspectRatio: "1/1" }}>
-                <img src={image2} alt="" loading="lazy" />
+                <FadeImg src={image2} alt="" loading="lazy" />
               </div>
               <Link href="/services" className="btn mag" style={{ alignSelf: "flex-start" }}>
                 <span className="t">

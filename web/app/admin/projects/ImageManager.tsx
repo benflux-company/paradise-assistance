@@ -9,13 +9,14 @@ export default function ImageManager({ projectId, images, uploadsEnabled }: { pr
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
 
   async function onUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
     setError("");
-    setBusy(true);
+    setUploading(true);
     const form = new FormData();
     form.append("file", file);
     const res = await fetch(`/api/admin/projects/${projectId}/images`, { method: "POST", body: form });
@@ -25,7 +26,7 @@ export default function ImageManager({ projectId, images, uploadsEnabled }: { pr
     } else {
       router.refresh();
     }
-    setBusy(false);
+    setUploading(false);
     if (fileRef.current) fileRef.current.value = "";
   }
 
@@ -108,7 +109,14 @@ export default function ImageManager({ projectId, images, uploadsEnabled }: { pr
         </div>
       )}
 
-      <input ref={fileRef} type="file" accept="image/*" onChange={onUpload} disabled={!uploadsEnabled || busy} />
+      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <input ref={fileRef} type="file" accept="image/*" onChange={onUpload} disabled={!uploadsEnabled || busy || uploading} />
+        {uploading && (
+          <span className="adm-spinner" aria-live="polite">
+            Import en cours…
+          </span>
+        )}
+      </div>
     </div>
   );
 }

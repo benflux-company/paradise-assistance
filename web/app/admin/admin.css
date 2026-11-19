@@ -11,6 +11,30 @@
   --adm-warn: #a66a00;
 }
 
+.adm-spinner {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--adm-muted);
+}
+
+.adm-spinner::before {
+  content: "";
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--adm-line);
+  border-top-color: var(--adm-ink);
+  animation: adm-spin 0.7s linear infinite;
+}
+
+@keyframes adm-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .adm {
   font-family: "Poppins", system-ui, sans-serif;
   color: var(--adm-ink);

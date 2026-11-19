@@ -20,7 +20,7 @@ export const CONTENT_FIELDS: ContentFieldDef[] = [
   { key: "hero_eyebrow", label: "Sur-titre", type: "text", section: "Accueil — en-tête", default: "Architecture d'intérieur · Menuiserie sur mesure" },
   { key: "hero_title_line1", label: "Titre (ligne 1)", type: "text", section: "Accueil — en-tête", default: "L'art de vivre" },
   { key: "hero_title_line2", label: "Titre (ligne 2, en italique)", type: "text", section: "Accueil — en-tête", default: "chez soi." },
-  { key: "hero_intro", label: "Texte d'introduction", type: "textarea", section: "Accueil — en-tête", default: "Ets Paradise Assistance conçoit et réalise vos cuisines, dressings, murs TV et intérieurs complets, du premier croquis à la dernière finition." },
+  { key: "hero_intro", label: "Texte d'introduction", type: "textarea", section: "Accueil — en-tête", default: "Ets Paradis Assistance conçoit et réalise vos cuisines, dressings, murs TV et intérieurs complets, du premier croquis à la dernière finition." },
 
   // Accueil — studio / intro section
   { key: "intro_label", label: "Sur-titre de la section", type: "text", section: "Accueil — le studio", default: "Le studio" },

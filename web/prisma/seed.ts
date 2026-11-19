@@ -39,11 +39,18 @@ async function main() {
     update: {},
     create: {
       id: "settings",
+      phone: "+243 991 836 082, +227 78 555 6933",
+      email: "contact@paradis-assistances.com",
+      address: "Kinshasa, av. réf. IPG",
+      hours: "Du lundi au vendredi de 07h30 à 17h00",
+      contactEmail: "contact@paradis-assistances.com,jacquesdjulama7@gmail.com",
+      // TODO(client) : tranches de budget réelles à fournir — ne doit jamais
+      // rester en l'état en production, ce sont des valeurs provisoires.
       budgetRanges: ["[TRANCHE 1]", "[TRANCHE 2]", "[TRANCHE 3]", "À définir"],
       projectTypes: ["Cuisine", "Dressing", "Mur TV", "Salle de bain", "Salon", "Aménagement complet"],
-      seoDefaultTitle: "Ets Paradise Assistance — Architecture d'intérieur",
+      seoDefaultTitle: "Ets Paradis Assistance — Architecture d'intérieur",
       seoDefaultDesc:
-        "Ets Paradise Assistance conçoit et réalise cuisines, dressings, murs TV et aménagements d'intérieur sur mesure.",
+        "Ets Paradis Assistance conçoit et réalise cuisines, dressings, murs TV et aménagements d'intérieur sur mesure.",
     },
   });
 

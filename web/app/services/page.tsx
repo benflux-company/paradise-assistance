@@ -3,6 +3,7 @@ import RevealMain from "@/components/RevealMain";
 import PageHead from "@/components/PageHead";
 import ServicesList from "@/components/services/ServicesList";
 import FaqAccordion from "@/components/FaqAccordion";
+import FadeImg from "@/components/FadeImg";
 import { getServices, getFaqs } from "@/lib/queries";
 import { getSiteContent } from "@/lib/siteContent";
 
@@ -23,7 +24,7 @@ export default async function ServicesPage() {
         description={content.services_description}
       />
       <div className="phimg">
-        <img src={content.services_header_image} alt="" />
+        <FadeImg src={content.services_header_image} alt="" />
       </div>
       <ServicesList services={services} />
       <section className="sec" style={{ background: "var(--mist)" }}>

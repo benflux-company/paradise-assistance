@@ -5,6 +5,7 @@ import RevealMain from "@/components/RevealMain";
 import { getPostBySlug, getNextPost } from "@/lib/queries";
 import { renderMarkdown } from "@/lib/markdown";
 import Arrow from "@/components/icons/Arrow";
+import FadeImg from "@/components/FadeImg";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -40,7 +41,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
         <div className="wrap">
           <div className="art">
             <div className="hero-i par">
-              <img src={post.image} alt="" />
+              <FadeImg src={post.image} alt="" />
             </div>
             {post.content.trim() ? (
               <div className="body" dangerouslySetInnerHTML={{ __html: renderMarkdown(post.content) }} />
