@@ -3,28 +3,29 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ensureGsap, gsap, Flip, ScrollTrigger } from "@/lib/gsap";
 import { isReducedMotion } from "@/lib/motion";
-import { PROJECTS, PROJECT_CATEGORIES, pad } from "@/lib/data";
+import { PROJECT_CATEGORIES, pad } from "@/lib/data";
+import type { ProjectView } from "@/lib/queries";
 import { openLightbox, setLightboxScope } from "@/lib/lightbox";
 
 type FlipMode = "filter" | "view";
 
-export default function PortfolioGrid() {
+export default function PortfolioGrid({ projects }: { projects: ProjectView[] }) {
   const [pf, setPf] = useState<(typeof PROJECT_CATEGORIES)[number]>("Tous");
   const [view, setView] = useState<"grid" | "list">("grid");
   const gridRef = useRef<HTMLDivElement>(null);
   const flipState = useRef<Flip.FlipState | null>(null);
   const flipMode = useRef<FlipMode | null>(null);
 
-  const shownIndices = useMemo(
-    () => PROJECTS.map((_, i) => i).filter((i) => pf === "Tous" || PROJECTS[i].category === pf),
-    [pf]
+  const shownSlugs = useMemo(
+    () => projects.filter((p) => pf === "Tous" || p.category === pf).map((p) => p.slug),
+    [projects, pf]
   );
-  const shownSet = useMemo(() => new Set(shownIndices), [shownIndices]);
+  const shownSet = useMemo(() => new Set(shownSlugs), [shownSlugs]);
 
   useEffect(() => {
-    setLightboxScope(shownIndices);
+    setLightboxScope(shownSlugs);
     return () => setLightboxScope(null);
-  }, [shownIndices]);
+  }, [shownSlugs]);
 
   function captureFlip(mode: FlipMode) {
     if (isReducedMotion() || !gridRef.current) return;
@@ -82,8 +83,8 @@ export default function PortfolioGrid() {
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
             <span id="pc" style={{ fontSize: 12, letterSpacing: ".2em", textTransform: "uppercase", color: "var(--muted)" }} aria-live="polite">
-              {pad(shownIndices.length)}
-              {shownIndices.length > 1 ? " projets" : " projet"}
+              {pad(shownSlugs.length)}
+              {shownSlugs.length > 1 ? " projets" : " projet"}
             </span>
             <div className="vtog" role="group" aria-label="Affichage">
               <button type="button" id="vg" aria-pressed={view === "grid"} aria-label="Affichage en grille" onClick={() => changeView("grid")}>
@@ -103,19 +104,19 @@ export default function PortfolioGrid() {
           </div>
         </div>
         <div className={`pgrid${view === "list" ? " list" : ""}`} id="pgrid" ref={gridRef}>
-          {PROJECTS.map((p, k) => (
+          {projects.map((p, k) => (
             <button
               key={p.slug}
               type="button"
               className={`pitem${p.wide ? " wide" : ""}`}
-              data-lb={k}
+              data-lb={p.slug}
               data-c={p.category}
               data-cur="Voir"
-              hidden={!shownSet.has(k)}
-              onClick={() => openLightbox(k)}
+              hidden={!shownSet.has(p.slug)}
+              onClick={() => openLightbox(p.slug)}
             >
               <div className="im">
-                <img src={`/img/${p.image}.jpg`} alt={p.alt} loading="lazy" />
+                <img src={p.image} alt={p.alt} loading="lazy" />
                 <div className="hv">
                   <span>Voir le projet</span>
                 </div>

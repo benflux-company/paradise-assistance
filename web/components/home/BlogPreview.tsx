@@ -1,13 +1,9 @@
 import Link from "next/link";
-import { POSTS } from "@/lib/data";
+import type { PostView } from "@/lib/queries";
 import BlogCard from "@/components/BlogCard";
 import Arrow from "@/components/icons/Arrow";
 
-const PREVIEW_IDS = [4, 2, 3];
-
-export default function BlogPreview() {
-  const posts = PREVIEW_IDS.map((id) => POSTS.find((p) => p.id === id)!);
-
+export default function BlogPreview({ posts }: { posts: PostView[] }) {
   return (
     <section className="sec" style={{ paddingTop: 0 }}>
       <div className="wrap">
@@ -37,7 +33,7 @@ export default function BlogPreview() {
         </div>
         <div className="bgrid" id="hblog">
           {posts.map((post) => (
-            <BlogCard key={post.id} post={post} />
+            <BlogCard key={post.slug} post={post} />
           ))}
         </div>
       </div>

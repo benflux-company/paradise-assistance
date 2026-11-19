@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import RevealMain from "@/components/RevealMain";
 import PageHead from "@/components/PageHead";
 import PortfolioGrid from "@/components/portfolio/PortfolioGrid";
+import { getProjects } from "@/lib/queries";
 
 export const metadata: Metadata = {
   title: "Portfolio",
@@ -9,7 +10,9 @@ export const metadata: Metadata = {
     "Cuisines, murs TV, dressings et salles de bain. Chaque projet est dessiné, fabriqué et posé par notre équipe.",
 };
 
-export default function PortfolioPage() {
+export default async function PortfolioPage() {
+  const projects = await getProjects();
+
   return (
     <RevealMain id="p-portfolio" dataT="Portfolio">
       <PageHead
@@ -17,7 +20,7 @@ export default function PortfolioPage() {
         titleLines={["Nos", "réalisations"]}
         description="Cuisines, murs TV, dressings et salles de bain. Chaque projet est dessiné, fabriqué et posé par notre équipe. Cliquez sur une image pour l'ouvrir en grand."
       />
-      <PortfolioGrid />
+      <PortfolioGrid projects={projects} />
     </RevealMain>
   );
 }

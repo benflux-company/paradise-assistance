@@ -4,13 +4,12 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { ensureGsap, gsap } from "@/lib/gsap";
 import { isReducedMotion } from "@/lib/motion";
-import { PROJECTS, pad } from "@/lib/data";
+import { pad } from "@/lib/data";
+import type { ProjectView } from "@/lib/queries";
 import Arrow from "@/components/icons/Arrow";
 import { openLightbox } from "@/lib/lightbox";
 
-const TRACK_INDICES = [0, 1, 2, 3, 4, 5, 6];
-
-export default function HorizontalProjects() {
+export default function HorizontalProjects({ projects }: { projects: ProjectView[] }) {
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
 
@@ -74,36 +73,33 @@ export default function HorizontalProjects() {
         </p>
       </div>
       <div className="track" id="track" ref={trackRef}>
-        {TRACK_INDICES.map((idx, k) => {
-          const p = PROJECTS[idx];
-          return (
-            <button
-              key={p.slug}
-              type="button"
-              className="hcard"
-              data-lb={idx}
-              data-cur="Voir"
-              onClick={() => openLightbox(idx)}
-            >
-              <div className="im">
-                <img src={`/img/${p.image}.jpg`} alt={p.alt} loading="lazy" />
-                {p.gallery.length > 1 && <span className="pbadge">{p.gallery.length} photos</span>}
-              </div>
-              <div className="row">
-                <div>
-                  <div className="c">
-                    {pad(k + 1)} &middot; {p.category}
-                  </div>
-                  <h3 className="sf">{p.title}</h3>
-                  <p className="s">{p.shortDesc}</p>
+        {projects.map((p, k) => (
+          <button
+            key={p.slug}
+            type="button"
+            className="hcard"
+            data-lb={p.slug}
+            data-cur="Voir"
+            onClick={() => openLightbox(p.slug)}
+          >
+            <div className="im">
+              <img src={p.image} alt={p.alt} loading="lazy" />
+              {p.gallery.length > 1 && <span className="pbadge">{p.gallery.length} photos</span>}
+            </div>
+            <div className="row">
+              <div>
+                <div className="c">
+                  {pad(k + 1)} &middot; {p.category}
                 </div>
-                <span className="go">
-                  <Arrow />
-                </span>
+                <h3 className="sf">{p.title}</h3>
+                <p className="s">{p.shortDesc}</p>
               </div>
-            </button>
-          );
-        })}
+              <span className="go">
+                <Arrow />
+              </span>
+            </div>
+          </button>
+        ))}
         <div className="hz-end">
           <p className="sf" style={{ fontSize: 44, lineHeight: 1.1 }}>
             Et bien d&apos;autres réalisations à découvrir.

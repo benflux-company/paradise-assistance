@@ -16,8 +16,17 @@ import { ensureGsap, gsap, ScrollTrigger } from "@/lib/gsap";
 import { setupSharedAnims } from "@/lib/animations";
 import { labelFromPathname } from "@/lib/pageMeta";
 import { isReducedMotion, isTouchViewport, setLenis, setNavBusy, scrollToTop } from "@/lib/motion";
+import type { ProjectView, SettingsView } from "@/lib/queries";
 
-export default function Chrome({ children }: { children: React.ReactNode }) {
+export default function Chrome({
+  children,
+  projects,
+  settings,
+}: {
+  children: React.ReactNode;
+  projects: ProjectView[];
+  settings: SettingsView;
+}) {
   const pathname = usePathname();
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -146,11 +155,11 @@ export default function Chrome({ children }: { children: React.ReactNode }) {
       <ProgressBar />
       <div id="flt" aria-hidden="true"></div>
       <Header menuOpen={menuOpen} onToggleMenu={() => setMenuOpen((v) => !v)} />
-      <MobileMenu open={menuOpen} />
+      <MobileMenu open={menuOpen} settings={settings} />
       {children}
       <Cta hidden={isContact} />
-      <Footer />
-      <Lightbox />
+      <Footer settings={settings} />
+      <Lightbox projects={projects} />
     </>
   );
 }

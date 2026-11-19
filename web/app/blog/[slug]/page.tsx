@@ -2,26 +2,23 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import RevealMain from "@/components/RevealMain";
-import { POSTS } from "@/lib/data";
+import { getPostBySlug, getNextPost } from "@/lib/queries";
+import { renderMarkdown } from "@/lib/markdown";
 import Arrow from "@/components/icons/Arrow";
-
-function findPost(slug: string) {
-  return POSTS.find((p) => p.slug === slug);
-}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const post = findPost(slug);
+  const post = await getPostBySlug(slug);
   if (!post) return {};
   return { title: post.title, description: post.excerpt };
 }
 
 export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const post = findPost(slug);
+  const post = await getPostBySlug(slug);
   if (!post) redirect("/blog");
 
-  const next = POSTS[(POSTS.indexOf(post) + 1) % POSTS.length];
+  const next = await getNextPost(post.slug);
 
   return (
     <RevealMain id="p-article" dataT="Article">
@@ -43,9 +40,13 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
         <div className="wrap">
           <div className="art">
             <div className="hero-i par">
-              <img src={`/img/${post.image}.jpg`} alt="" />
+              <img src={post.image} alt="" />
             </div>
-            <div className="ph-box">[Contenu de l&apos;article à rédiger]</div>
+            {post.content.trim() ? (
+              <div className="body" dangerouslySetInnerHTML={{ __html: renderMarkdown(post.content) }} />
+            ) : (
+              <div className="ph-box">[Contenu de l&apos;article à rédiger]</div>
+            )}
             <div
               style={{
                 display: "flex",
@@ -63,13 +64,15 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                   <span>Tous les articles</span>
                 </span>
               </Link>
-              <Link href={`/blog/${next.slug}`} className="btn fill">
-                <span className="t">
-                  <span>Article suivant</span>
-                  <span>Article suivant</span>
-                </span>
-                <Arrow />
-              </Link>
+              {next && (
+                <Link href={`/blog/${next.slug}`} className="btn fill">
+                  <span className="t">
+                    <span>Article suivant</span>
+                    <span>Article suivant</span>
+                  </span>
+                  <Arrow />
+                </Link>
+              )}
             </div>
           </div>
         </div>

@@ -3,10 +3,11 @@
 import { useEffect, useRef } from "react";
 import { ensureGsap, gsap } from "@/lib/gsap";
 import { isReducedMotion, isTouchViewport } from "@/lib/motion";
-import { HERO_SLIDES, pad } from "@/lib/data";
+import { pad } from "@/lib/data";
+import type { HeroSlideView } from "@/lib/queries";
 import Arrow from "@/components/icons/Arrow";
 
-export default function Hero() {
+export default function Hero({ slides }: { slides: HeroSlideView[] }) {
   const heroRef = useRef<HTMLElement>(null);
   const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
   const capTextRef = useRef<HTMLDivElement>(null);
@@ -19,6 +20,7 @@ export default function Hero() {
     ensureGsap();
     const touch = isTouchViewport();
     const HS = slideRefs.current.filter(Boolean) as HTMLDivElement[];
+    if (!HS.length) return;
     const state = { hi: 0, paused: false, timer: null as gsap.core.Tween | null };
     let disposed = false;
 
@@ -57,8 +59,8 @@ export default function Hero() {
         if (s !== cur && s !== prev) gsap.set(s, { zIndex: 0 });
       });
 
-      const image = cur.querySelector("img");
-      gsap.fromTo(image, { scale: 1.3 }, { scale: 1.12, duration: 2, ease: "expo.out" });
+      const media = cur.querySelector("img,video");
+      gsap.fromTo(media, { scale: 1.3 }, { scale: 1.12, duration: 2, ease: "expo.out" });
 
       gsap.to(cur, {
         clipPath: "inset(0 0% 0 0%)",
@@ -82,14 +84,14 @@ export default function Hero() {
           delay: 0.5,
           ease: "expo.out",
           onStart: () => {
-            if (capTextRef.current) capTextRef.current.textContent = HERO_SLIDES[state.hi].caption;
+            if (capTextRef.current) capTextRef.current.textContent = slides[state.hi].caption;
           },
         }
       );
       htimer();
     }
 
-    gsap.fromTo(".hero .sl.on img", { scale: 1.35 }, { scale: 1.12, duration: 2.6, ease: "expo.out" });
+    gsap.fromTo(".hero .sl.on img,.hero .sl.on video", { scale: 1.35 }, { scale: 1.12, duration: 2.6, ease: "expo.out" });
 
     const scrollTweens: gsap.core.Tween[] = [];
     if (!touch && heroRef.current) {
@@ -102,7 +104,7 @@ export default function Hero() {
       );
       scrollTweens.push(
         gsap.to(
-          HS.map((s) => s.querySelector("img")),
+          HS.map((s) => s.querySelector("img,video")),
           { yPercent: 12, ease: "none", scrollTrigger: { trigger: heroRef.current, start: "top top", end: "bottom top", scrub: true } }
         )
       );
@@ -137,19 +139,31 @@ export default function Hero() {
       heroEl?.removeEventListener("focusin", onFocusIn);
       heroEl?.removeEventListener("focusout", onFocusOut);
     };
-  }, []);
+  }, [slides]);
 
   return (
     <section className="hero ondark" aria-label="Présentation" ref={heroRef}>
-      {HERO_SLIDES.map((slide, i) => (
+      {slides.map((slide, i) => (
         <div
-          key={slide.image}
+          key={slide.image + slide.caption}
           className={`sl${i === 0 ? " on" : ""}`}
           ref={(el) => {
             slideRefs.current[i] = el;
           }}
         >
-          <img src={`/img/${slide.image}.jpg`} alt={slide.alt} />
+          {slide.video ? (
+            <video
+              src={slide.video}
+              poster={slide.image}
+              autoPlay
+              muted
+              loop
+              playsInline
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          ) : (
+            <img src={slide.image} alt={slide.alt} />
+          )}
         </div>
       ))}
       <div className="ov"></div>
@@ -158,7 +172,7 @@ export default function Hero() {
           Projet
         </div>
         <div className="sf" style={{ fontSize: 24, letterSpacing: 0, textTransform: "none", marginTop: 6 }} ref={capTextRef}>
-          {HERO_SLIDES[0].caption}
+          {slides[0]?.caption}
         </div>
       </div>
       <div className="ct" ref={ctRef}>
@@ -188,7 +202,7 @@ export default function Hero() {
                 </svg>
               </button>
               <span className="num" ref={numRef} id="hnum">
-                {pad(1)} / {pad(HERO_SLIDES.length)}
+                {pad(1)} / {pad(slides.length)}
               </span>
               <span className="trk">
                 <i ref={trkRef} id="htrk"></i>

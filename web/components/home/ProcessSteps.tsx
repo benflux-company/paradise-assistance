@@ -3,9 +3,10 @@
 import { useEffect, useRef } from "react";
 import { ensureGsap, gsap, ScrollTrigger } from "@/lib/gsap";
 import { isReducedMotion, isTouchViewport } from "@/lib/motion";
-import { METHOD_STEPS, pad } from "@/lib/data";
+import { pad } from "@/lib/data";
+import type { MethodStepView } from "@/lib/queries";
 
-export default function ProcessSteps() {
+export default function ProcessSteps({ steps: METHOD_STEPS }: { steps: MethodStepView[] }) {
   const stkRef = useRef<HTMLDivElement>(null);
   const stepsRef = useRef<HTMLDivElement>(null);
   const pnRef = useRef<HTMLDivElement>(null);
@@ -40,7 +41,7 @@ export default function ProcessSteps() {
     );
 
     return () => triggers.forEach((t) => t.kill());
-  }, []);
+  }, [METHOD_STEPS]);
 
   return (
     <section className="sec">
@@ -62,7 +63,7 @@ export default function ProcessSteps() {
           <div className="stk" id="stk" ref={stkRef}>
             {METHOD_STEPS.map((s, k) => (
               <div className={`pi${k === 0 ? " on" : ""}`} key={s.title}>
-                <img src={`/img/${s.image}.jpg`} alt="" loading="lazy" />
+                <img src={s.image} alt="" loading="lazy" />
               </div>
             ))}
             <div className="pn" id="pn" ref={pnRef}>

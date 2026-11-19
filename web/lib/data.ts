@@ -192,7 +192,7 @@ export const POSTS: PostData[] = [
     image: "tv-noir",
     category: "Conseils",
     title: "Mur TV en lamelles : comment il se construit",
-    excerpt: "De l'ossature aux lamelles, en passant par le panneau laqué et l'éclairage LED.",
+    excerpt: "De l'ossature aux lamelles, en passant par le panneau laqué et l'éclairage LED : les étapes d'un mur TV sur mesure.",
   },
   {
     id: 2,

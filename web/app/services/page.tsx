@@ -3,6 +3,7 @@ import RevealMain from "@/components/RevealMain";
 import PageHead from "@/components/PageHead";
 import ServicesList from "@/components/services/ServicesList";
 import FaqAccordion from "@/components/FaqAccordion";
+import { getServices, getFaqs } from "@/lib/queries";
 
 export const metadata: Metadata = {
   title: "Services",
@@ -10,7 +11,9 @@ export const metadata: Metadata = {
     "De la conception au suivi de chantier, une équipe unique prend en charge votre projet d'intérieur, quelle que soit la pièce.",
 };
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  const [services, faqs] = await Promise.all([getServices(), getFaqs()]);
+
   return (
     <RevealMain id="p-services" dataT="Services">
       <PageHead
@@ -21,7 +24,7 @@ export default function ServicesPage() {
       <div className="phimg">
         <img src="/img/tv-gris.jpg" alt="Mur TV en lamelles grises avec éclairage LED" />
       </div>
-      <ServicesList />
+      <ServicesList services={services} />
       <section className="sec" style={{ background: "var(--mist)" }}>
         <div className="wrap" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(380px,100%),1fr))", gap: 80 }}>
           <div>
@@ -39,7 +42,7 @@ export default function ServicesPage() {
               </span>
             </h2>
           </div>
-          <FaqAccordion />
+          <FaqAccordion faqs={faqs} />
         </div>
       </section>
     </RevealMain>

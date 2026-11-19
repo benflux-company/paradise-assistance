@@ -4,12 +4,15 @@ import { useEffect, useRef, useState } from "react";
 import { ensureGsap, gsap } from "@/lib/gsap";
 import { isReducedMotion } from "@/lib/motion";
 
-const PROJECT_TYPES = ["Cuisine", "Dressing", "Mur TV", "Salle de bain", "Salon", "Aménagement complet"];
-const BUDGETS = ["[TRANCHE 1]", "[TRANCHE 2]", "[TRANCHE 3]", "À définir"];
-
-export default function ContactForm() {
-  const [ctp, setCtp] = useState(PROJECT_TYPES[0]);
-  const [cbd, setCbd] = useState(BUDGETS[3]);
+export default function ContactForm({
+  projectTypes,
+  budgetRanges,
+}: {
+  projectTypes: string[];
+  budgetRanges: string[];
+}) {
+  const [ctp, setCtp] = useState(projectTypes[0] ?? "");
+  const [cbd, setCbd] = useState(budgetRanges[budgetRanges.length - 1] ?? "");
   const [nameErr, setNameErr] = useState(false);
   const [contactErr, setContactErr] = useState(false);
   const [done, setDone] = useState(false);
@@ -72,8 +75,8 @@ export default function ContactForm() {
     formRef.current?.reset();
     setNameErr(false);
     setContactErr(false);
-    setCtp(PROJECT_TYPES[0]);
-    setCbd(BUDGETS[3]);
+    setCtp(projectTypes[0] ?? "");
+    setCbd(budgetRanges[budgetRanges.length - 1] ?? "");
     setDone(false);
     gsap.set(formRef.current, { opacity: 1, y: 0 });
     setTimeout(() => nameRef.current?.focus(), 0);
@@ -101,7 +104,7 @@ export default function ContactForm() {
             Type de projet
           </div>
           <div className="chips2" id="ctype" role="group" aria-labelledby="lt">
-            {PROJECT_TYPES.map((t) => (
+            {projectTypes.map((t) => (
               <button key={t} type="button" className="x" aria-pressed={t === ctp} onClick={() => setCtp(t)}>
                 {t}
               </button>
@@ -113,7 +116,7 @@ export default function ContactForm() {
             Budget envisagé
           </div>
           <div className="chips2" id="cbud" role="group" aria-labelledby="lb2">
-            {BUDGETS.map((b) => (
+            {budgetRanges.map((b) => (
               <button key={b} type="button" className="x" aria-pressed={b === cbd} onClick={() => setCbd(b)}>
                 {b}
               </button>

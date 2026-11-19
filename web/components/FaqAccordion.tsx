@@ -1,9 +1,9 @@
-import { FAQS } from "@/lib/data";
+import type { FaqView } from "@/lib/queries";
 
-export default function FaqAccordion() {
+export default function FaqAccordion({ faqs }: { faqs: FaqView[] }) {
   return (
     <div className="acc">
-      {FAQS.map((f) => (
+      {faqs.map((f) => (
         <details key={f.question}>
           <summary className="sf">
             {f.question} <span className="pl" aria-hidden="true"></span>

@@ -2,9 +2,9 @@
   {
     "page": "accueil",
     "size": "1440x900",
-    "mismatched": 901,
+    "mismatched": 940,
     "total": 15164640,
-    "pct": 0.005941453275514618,
+    "pct": 0.006198630498317138,
     "dimMismatch": false,
     "oldDim": "1440x10531",
     "newDim": "1440x10531"
@@ -22,9 +22,9 @@
   {
     "page": "accueil",
     "size": "390x844",
-    "mismatched": 962,
+    "mismatched": 975,
     "total": 6095310,
-    "pct": 0.0157826263143302,
+    "pct": 0.015995905048307633,
     "dimMismatch": false,
     "oldDim": "390x15629",
     "newDim": "390x15629"
@@ -32,9 +32,9 @@
   {
     "page": "portfolio",
     "size": "1440x900",
-    "mismatched": 939,
+    "mismatched": 927,
     "total": 9725760,
-    "pct": 0.00965477248050538,
+    "pct": 0.009531388806633106,
     "dimMismatch": false,
     "oldDim": "1440x6754",
     "newDim": "1440x6754"
@@ -72,9 +72,9 @@
   {
     "page": "services",
     "size": "1210x650",
-    "mismatched": 1121,
+    "mismatched": 1133,
     "total": 10433830,
-    "pct": 0.010743897494975478,
+    "pct": 0.010858907994475663,
     "dimMismatch": false,
     "oldDim": "1210x8623",
     "newDim": "1210x8623"
@@ -102,9 +102,9 @@
   {
     "page": "blog",
     "size": "1210x650",
-    "mismatched": 917,
+    "mismatched": 929,
     "total": 5215100,
-    "pct": 0.017583555444766162,
+    "pct": 0.017813656497478476,
     "dimMismatch": false,
     "oldDim": "1210x4310",
     "newDim": "1210x4310"
@@ -122,9 +122,9 @@
   {
     "page": "article",
     "size": "1440x900",
-    "mismatched": 929,
+    "mismatched": 917,
     "total": 4764960,
-    "pct": 0.019496491051341457,
+    "pct": 0.019244652630872033,
     "dimMismatch": false,
     "oldDim": "1440x3309",
     "newDim": "1440x3309"
@@ -152,9 +152,9 @@
   {
     "page": "contact",
     "size": "1440x900",
-    "mismatched": 934,
+    "mismatched": 922,
     "total": 4188960,
-    "pct": 0.022296703716435586,
+    "pct": 0.02201023643099958,
     "dimMismatch": false,
     "oldDim": "1440x2909",
     "newDim": "1440x2909"
@@ -162,9 +162,9 @@
   {
     "page": "contact",
     "size": "1210x650",
-    "mismatched": 917,
+    "mismatched": 929,
     "total": 3425510,
-    "pct": 0.026769736477196097,
+    "pct": 0.02712004927733389,
     "dimMismatch": false,
     "oldDim": "1210x2831",
     "newDim": "1210x2831"

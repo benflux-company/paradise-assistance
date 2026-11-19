@@ -5,8 +5,10 @@ import { useEffect, useRef } from "react";
 import { ensureGsap, gsap } from "@/lib/gsap";
 import { NAV_PAGES } from "@/lib/pageMeta";
 import { getLenis, isReducedMotion } from "@/lib/motion";
+import { orPlaceholder } from "@/lib/placeholders";
+import type { SettingsView } from "@/lib/queries";
 
-export default function MobileMenu({ open }: { open: boolean }) {
+export default function MobileMenu({ open, settings }: { open: boolean; settings: SettingsView }) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -43,8 +45,8 @@ export default function MobileMenu({ open }: { open: boolean }) {
         ))}
       </nav>
       <div className="mi">
-        <span>[TÉLÉPHONE]</span>
-        <span>[ADRESSE E-MAIL]</span>
+        <span>{orPlaceholder(settings.phone, "[TÉLÉPHONE]")}</span>
+        <span>{orPlaceholder(settings.email, "[ADRESSE E-MAIL]")}</span>
       </div>
     </div>
   );

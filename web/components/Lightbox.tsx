@@ -5,10 +5,11 @@ import Link from "next/link";
 import { ensureGsap, gsap } from "@/lib/gsap";
 import { getLenis } from "@/lib/motion";
 import { setLightboxHandler, getLightboxScope } from "@/lib/lightbox";
-import { PROJECTS, pad } from "@/lib/data";
+import { pad } from "@/lib/data";
+import type { ProjectView } from "@/lib/queries";
 import Arrow from "@/components/icons/Arrow";
 
-export default function Lightbox() {
+export default function Lightbox({ projects }: { projects: ProjectView[] }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
@@ -19,18 +20,23 @@ export default function Lightbox() {
   // Logic reads/writes this ref synchronously (fine in handlers/effects).
   // `nav` state mirrors it for render — refs must never be read during render.
   const state = useRef({
-    lbi: -1,
+    lbSlug: "",
     lbImg: 0,
-    lbList: [] as number[],
+    lbList: [] as string[],
   });
-  const [nav, setNav] = useState({ lbi: -1, lbList: [] as number[] });
+  const [nav, setNav] = useState({ lbSlug: "", lbList: [] as string[] });
   const [thumbs, setThumbs] = useState<string[]>([]);
   const [activeThumb, setActiveThumb] = useState(0);
 
+  function findProject(slug: string) {
+    return projects.find((p) => p.slug === slug) ?? null;
+  }
+
   function renderPhoto(j: number) {
-    const p = PROJECTS[state.current.lbi];
+    const p = findProject(state.current.lbSlug);
+    if (!p) return;
     state.current.lbImg = j;
-    const src = `/img/${p.gallery[j]}.jpg`;
+    const src = p.gallery[j];
     const sw = () => {
       if (imgRef.current) {
         imgRef.current.src = src;
@@ -53,22 +59,23 @@ export default function Lightbox() {
     setActiveThumb(j);
   }
 
-  function showProject(k: number, dir?: number) {
-    state.current.lbi = k;
+  function showProject(slug: string, dir?: number) {
+    const p = findProject(slug);
+    if (!p) return;
+    state.current.lbSlug = slug;
     state.current.lbImg = 0;
-    const p = PROJECTS[k];
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const set = () => {
       if (imgRef.current) {
-        imgRef.current.src = `/img/${p.gallery[0]}.jpg`;
+        imgRef.current.src = p.gallery[0];
         imgRef.current.alt = p.alt;
       }
       if (titleRef.current) titleRef.current.textContent = p.title;
-      setThumbs(p.gallery.map((g) => `/img/${g}.jpg`));
+      setThumbs(p.gallery);
       setActiveThumb(0);
       if (descRef.current) descRef.current.textContent = p.longDesc;
-      setNav({ lbi: state.current.lbi, lbList: state.current.lbList });
+      setNav({ lbSlug: state.current.lbSlug, lbList: state.current.lbList });
     };
 
     if (!reduced && dir) {
@@ -93,11 +100,11 @@ export default function Lightbox() {
     }
   }
 
-  function openAt(k: number) {
+  function openAt(slug: string) {
     lastFocusRef.current = document.activeElement as HTMLElement;
     const scope = getLightboxScope();
-    state.current.lbList = scope && scope.includes(k) ? scope.slice() : PROJECTS.map((_, i) => i);
-    showProject(k);
+    state.current.lbList = scope && scope.includes(slug) ? scope.slice() : projects.map((p) => p.slug);
+    showProject(slug);
     setOpen(true);
     const curState = (window as unknown as { __curState?: (el: Element | null) => void }).__curState;
     curState?.(null);
@@ -124,7 +131,7 @@ export default function Lightbox() {
 
   function step(d: number) {
     const list = state.current.lbList;
-    const p = list.indexOf(state.current.lbi);
+    const p = list.indexOf(state.current.lbSlug);
     showProject(list[(p + d + list.length) % list.length], d);
   }
 
@@ -172,8 +179,8 @@ export default function Lightbox() {
 
   const touchX = useRef<number | null>(null);
 
-  const p = nav.lbi >= 0 ? PROJECTS[nav.lbi] : null;
-  const pos = p ? nav.lbList.indexOf(nav.lbi) : -1;
+  const p = nav.lbSlug ? findProject(nav.lbSlug) : null;
+  const pos = p ? nav.lbList.indexOf(nav.lbSlug) : -1;
 
   return (
     <div id="lb" className={open ? "open" : undefined} role="dialog" aria-modal="true" aria-label="Aperçu du projet" ref={rootRef}>

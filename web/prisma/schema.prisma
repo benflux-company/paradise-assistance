@@ -77,6 +77,10 @@ model Post {
   content     String
   coverImage  String
   featured    Boolean      @default(false)
+  // Position in the blog listing (admin-reorderable, like the other content models).
+  order       Int          @default(0)
+  // Position among the 3 posts curated for the home page preview; null = not shown there.
+  homeOrder   Int?
   published   Boolean      @default(true)
   publishedAt DateTime     @default(now())
   createdAt   DateTime     @default(now())
@@ -84,6 +88,7 @@ model Post {
 
   @@index([category])
   @@index([publishedAt])
+  @@index([order])
 }
 
 model Service {
@@ -118,11 +123,12 @@ model MethodStep {
 }
 
 model HeroSlide {
-  id      String @id @default(cuid())
+  id      String  @id @default(cuid())
   image   String
+  video   String?
   alt     String
   caption String
-  order   Int    @default(0)
+  order   Int     @default(0)
 
   @@index([order])
 }

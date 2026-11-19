@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Chrome from "@/components/chrome/Chrome";
+import { getProjects, getSettings } from "@/lib/queries";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -15,7 +16,9 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const [projects, settings] = await Promise.all([getProjects(), getSettings()]);
+
   return (
     <html lang="fr">
       <head>
@@ -26,7 +29,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         />
       </head>
       <body>
-        <Chrome>{children}</Chrome>
+        <Chrome projects={projects} settings={settings}>
+          {children}
+        </Chrome>
       </body>
     </html>
   );

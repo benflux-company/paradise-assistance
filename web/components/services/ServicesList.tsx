@@ -1,10 +1,11 @@
-import { SERVICES, pad } from "@/lib/data";
+import { pad } from "@/lib/data";
+import type { ServiceView } from "@/lib/queries";
 
-export default function ServicesList() {
+export default function ServicesList({ services }: { services: ServiceView[] }) {
   return (
     <section style={{ padding: "40px 0 80px" }}>
       <div className="wrap" id="svlist">
-        {SERVICES.map((s, k) => (
+        {services.map((s, k) => (
           <article className={`sv${k % 2 ? " rv" : ""}`} key={s.title}>
             <div className="tx">
               <div className="k" data-up>
@@ -24,7 +25,7 @@ export default function ServicesList() {
               </ul>
             </div>
             <div className="im par">
-              <img src={`/img/${s.image}.jpg`} alt="" loading="lazy" />
+              <img src={s.image} alt="" loading="lazy" />
             </div>
           </article>
         ))}

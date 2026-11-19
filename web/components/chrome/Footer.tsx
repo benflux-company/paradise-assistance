@@ -2,8 +2,15 @@
 
 import Link from "next/link";
 import { scrollToTop } from "@/lib/motion";
+import { orPlaceholder } from "@/lib/placeholders";
+import type { SettingsView } from "@/lib/queries";
 
-export default function Footer() {
+function socialsLine(settings: SettingsView): string {
+  const socials = [settings.facebook, settings.instagram, settings.tiktok, settings.whatsapp, settings.linkedin].filter(Boolean);
+  return socials.length ? socials.join(" · ") : "[RÉSEAUX SOCIAUX]";
+}
+
+export default function Footer({ settings }: { settings: SettingsView }) {
   return (
     <footer className="ft ondark">
       <div className="wrap">
@@ -39,10 +46,10 @@ export default function Footer() {
           </div>
           <div className="col">
             <div className="h">Contact</div>
-            <span>[TÉLÉPHONE]</span>
-            <span>[ADRESSE E-MAIL]</span>
-            <span>[ADRESSE DU BUREAU]</span>
-            <span>[RÉSEAUX SOCIAUX]</span>
+            <span>{orPlaceholder(settings.phone, "[TÉLÉPHONE]")}</span>
+            <span>{orPlaceholder(settings.email, "[ADRESSE E-MAIL]")}</span>
+            <span>{orPlaceholder(settings.address, "[ADRESSE DU BUREAU]")}</span>
+            <span>{socialsLine(settings)}</span>
           </div>
         </div>
         <div className="huge sf" id="huge">

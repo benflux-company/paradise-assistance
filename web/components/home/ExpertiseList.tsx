@@ -3,10 +3,11 @@
 import { useEffect, useRef } from "react";
 import { ensureGsap, gsap } from "@/lib/gsap";
 import { isFinePointer, isNavBusy } from "@/lib/motion";
-import { SERVICES, pad } from "@/lib/data";
+import { pad } from "@/lib/data";
+import type { ServiceView } from "@/lib/queries";
 import Arrow from "@/components/icons/Arrow";
 
-export default function ExpertiseList() {
+export default function ExpertiseList({ services }: { services: ServiceView[] }) {
   const listRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -105,8 +106,8 @@ export default function ExpertiseList() {
           </p>
         </div>
         <div className="slist" id="slist" ref={listRef}>
-          {SERVICES.map((s, k) => (
-            <a key={s.title} href="/services" className="sitem" data-img={`/img/${s.image}.jpg`}>
+          {services.map((s, k) => (
+            <a key={s.title} href="/services" className="sitem" data-img={s.image}>
               <span className="n">{pad(k + 1)}</span>
               <h3 className="sf">{s.title}</h3>
               <p>{s.subtitle}</p>

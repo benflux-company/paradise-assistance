@@ -1,36 +1,76 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ets Paradise Assistance — site Next.js
 
-## Getting Started
+Migration du site vitrine statique (`index.html` à la racine du dépôt) vers
+Next.js, avec base de données, API et espace d'administration.
 
-First, run the development server:
+## Installation locale
+
+```bash
+npm install
+cp .env.example .env   # puis complète les valeurs (voir ci-dessous)
+```
+
+### Base de données
+
+Le site a besoin d'une base PostgreSQL. En local, le plus simple est un
+conteneur Docker :
+
+```bash
+docker run -d --name paradise-pg \
+  -e POSTGRES_USER=paradise -e POSTGRES_PASSWORD=paradise -e POSTGRES_DB=paradise_assistance \
+  -p 5432:5432 postgres:15-alpine
+```
+
+Mets à jour `DATABASE_URL` dans `.env` si tu utilises un port ou des
+identifiants différents, puis applique les migrations et le seed :
+
+```bash
+npx prisma migrate dev
+npx prisma db seed
+```
+
+Le seed importe tout le contenu actuel du site (projets, articles, services,
+étapes, FAQ, diaporama du hero) depuis `lib/data.ts`, et crée le compte
+administrateur à partir de `ADMIN_EMAIL` / `ADMIN_PASSWORD` dans `.env`.
+
+### Lancer le site
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ouvre [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Variables d'environnement
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Voir `.env.example` pour la liste complète et commentée. En résumé :
 
-## Learn More
+- `DATABASE_URL` — connexion PostgreSQL.
+- `SESSION_SECRET` — secret de session pour l'administration (`openssl rand -hex 32`).
+- `ADMIN_EMAIL` / `ADMIN_PASSWORD` — compte créé par le seed.
+- `SMTP_*` / `MAIL_FROM` — envoi des e-mails du formulaire de contact.
+- `PUBLIC_SITE_URL` — utilisée pour le sitemap, les métadonnées et les liens dans les e-mails.
+- `CLOUDINARY_URL` / `CLOUDINARY_FOLDER` — stockage des images et de la vidéo envoyées depuis l'administration.
 
-To learn more about Next.js, take a look at the following resources:
+## Commandes utiles
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run dev          # serveur de développement
+npm run build         # build de production
+npm run lint          # ESLint
+npx prisma studio      # interface d'exploration de la base
+npx prisma migrate dev  # nouvelle migration après modification du schéma
+npx prisma db seed      # relancer le seed (upsert, sans dupliquer)
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Vérification visuelle
 
-## Deploy on Vercel
+`scripts/visual-compare/` (à la racine du dépôt) compare automatiquement le
+rendu du site statique de référence et du site Next.js. Voir son propre
+README pour l'utilisation.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Déploiement
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Préparation Docker/Helm à venir (étape 10 du cahier des charges) —
+hébergement prévu sur le cluster Benflux, sous-domaine `benfluxgroup.com` en
+attendant l'achat du nom de domaine définitif.
