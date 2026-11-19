@@ -34,8 +34,10 @@ export default function Chrome({
   const curSpanRef = useRef<HTMLSpanElement>(null);
   const busyRef = useRef(false);
   const firstRef = useRef(true);
+  const isAdmin = pathname.startsWith("/admin");
 
   useEffect(() => {
+    if (isAdmin) return;
     ensureGsap();
     if (isReducedMotion()) document.documentElement.classList.add("nog");
     let lenis: Lenis | null = null;
@@ -55,6 +57,10 @@ export default function Chrome({
       lenis?.destroy();
       setLenis(null);
     };
+    // isAdmin is derived from pathname only to gate this mount-once effect;
+    // Chrome persists across client navigations as part of the root layout,
+    // so re-running it on an admin<->site transition isn't needed in practice.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function navigateWithCurtain(href: string) {
@@ -88,6 +94,7 @@ export default function Chrome({
   }
 
   useEffect(() => {
+    if (isAdmin) return;
     function onClick(e: MouseEvent) {
       if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
       const target = e.target as Element;
@@ -101,14 +108,31 @@ export default function Chrome({
       } catch {
         return;
       }
-      if (url.origin !== window.location.origin || url.pathname === pathname) return;
+      if (url.origin !== window.location.origin) return;
+      if (url.pathname === pathname) {
+        // Same page (e.g. tapping "Accueil" from the mobile menu while
+        // already on "/"): no curtain/navigation needed, but the menu must
+        // still close — nothing else in the click path does that for a
+        // same-URL link, since no route change ever happens to trigger it.
+        if (menuOpen) {
+          e.preventDefault();
+          setMenuOpen(false);
+        }
+        return;
+      }
       e.preventDefault();
       navigateWithCurtain(url.pathname);
     }
-    document.addEventListener("click", onClick);
-    return () => document.removeEventListener("click", onClick);
+    // Capture phase, not bubble: Next's own <Link> click handler runs on
+    // the bubble phase and calls preventDefault()+navigates natively before
+    // a bubble-phase document listener ever sees the event (React's root
+    // listener is registered well before this effect's). Capture on
+    // document fires first, letting us intercept before Link acts on it —
+    // this is what the curtain transition and menu-close-on-nav depend on.
+    document.addEventListener("click", onClick, true);
+    return () => document.removeEventListener("click", onClick, true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname]);
+  }, [pathname, menuOpen]);
 
   useEffect(() => {
     if (firstRef.current) {
@@ -137,12 +161,14 @@ export default function Chrome({
   }, [menuOpen]);
 
   useEffect(() => {
-    if (isReducedMotion()) return;
+    if (isAdmin || isReducedMotion()) return;
     ensureGsap();
     return setupSharedAnims(isTouchViewport());
-  }, [pathname]);
+  }, [pathname, isAdmin]);
 
   const isContact = pathname === "/contact";
+
+  if (isAdmin) return <>{children}</>;
 
   return (
     <>

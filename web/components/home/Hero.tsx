@@ -7,7 +7,19 @@ import { pad } from "@/lib/data";
 import type { HeroSlideView } from "@/lib/queries";
 import Arrow from "@/components/icons/Arrow";
 
-export default function Hero({ slides }: { slides: HeroSlideView[] }) {
+export default function Hero({
+  slides,
+  eyebrow,
+  titleLine1,
+  titleLine2,
+  intro,
+}: {
+  slides: HeroSlideView[];
+  eyebrow: string;
+  titleLine1: string;
+  titleLine2: string;
+  intro: string;
+}) {
   const heroRef = useRef<HTMLElement>(null);
   const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
   const capTextRef = useRef<HTMLDivElement>(null);
@@ -178,23 +190,20 @@ export default function Hero({ slides }: { slides: HeroSlideView[] }) {
       <div className="ct" ref={ctRef}>
         <div className="wrap">
           <div className="lab" data-hi style={{ marginBottom: 28, opacity: 0.9 }}>
-            Architecture d&apos;intérieur &middot; Menuiserie sur mesure
+            {eyebrow}
           </div>
           <h1 className="sf" data-split>
             <span className="ln">
-              <span>L&apos;art de vivre</span>
+              <span>{titleLine1}</span>
             </span>
             <span className="ln">
               <span>
-                <em>chez soi.</em>
+                <em>{titleLine2}</em>
               </span>
             </span>
           </h1>
           <div className="meta" data-hi>
-            <p>
-              Ets Paradise Assistance conçoit et réalise vos cuisines, dressings, murs TV et intérieurs complets, du
-              premier croquis à la dernière finition.
-            </p>
+            <p>{intro}</p>
             <div className="hctl">
               <button className="arr" type="button" id="hprev" aria-label="Image précédente">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true">

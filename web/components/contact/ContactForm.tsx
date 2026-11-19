@@ -17,6 +17,9 @@ export default function ContactForm({
   const [contactErr, setContactErr] = useState(false);
   const [done, setDone] = useState(false);
   const [dmsg, setDmsg] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const messageRef = useRef<HTMLTextAreaElement>(null);
 
   const formRef = useRef<HTMLFormElement>(null);
   const nameRef = useRef<HTMLInputElement>(null);
@@ -35,7 +38,7 @@ export default function ContactForm({
     gsap.fromTo(errEls, { x: -8 }, { x: 0, duration: 0.6, ease: "elastic.out(1,.3)" });
   }, [nameErr, contactErr]);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const nameBad = !nameRef.current?.value.trim();
     const contactBad = !contactRef.current?.value.trim();
@@ -49,9 +52,35 @@ export default function ContactForm({
       return;
     }
 
+    setSubmitError("");
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: nameRef.current!.value.trim(),
+          contact: contactRef.current!.value.trim(),
+          projectType: ctp,
+          budget: cbd,
+          message: messageRef.current?.value.trim() ?? "",
+        }),
+      });
+      if (!res.ok) {
+        setSubmitError("Une erreur est survenue. Merci de réessayer ou de nous contacter directement.");
+        setSubmitting(false);
+        return;
+      }
+    } catch {
+      setSubmitError("Une erreur est survenue. Merci de réessayer ou de nous contacter directement.");
+      setSubmitting(false);
+      return;
+    }
+
     setDmsg(`Votre demande pour : ${ctp.toLowerCase()} est bien enregistrée. Nous revenons vers vous rapidement pour fixer une visite.`);
 
     const finish = () => {
+      setSubmitting(false);
       setDone(true);
       setTimeout(() => againRef.current?.focus(), 0);
     };
@@ -124,15 +153,20 @@ export default function ContactForm({
           </div>
         </div>
         <div className="fg">
-          <textarea id="f-m" rows={4} placeholder=" "></textarea>
+          <textarea id="f-m" rows={4} placeholder=" " ref={messageRef}></textarea>
           <label htmlFor="f-m">Votre projet : pièce, dimensions, délais</label>
           <span className="ln2"></span>
         </div>
+        {submitError && (
+          <p role="alert" style={{ color: "var(--err, #c0392b)", fontSize: 14 }}>
+            {submitError}
+          </p>
+        )}
         <div>
-          <button type="submit" className="btn fill mag">
+          <button type="submit" className="btn fill mag" disabled={submitting}>
             <span className="t">
-              <span>Envoyer la demande</span>
-              <span>Envoyer la demande</span>
+              <span>{submitting ? "Envoi…" : "Envoyer la demande"}</span>
+              <span>{submitting ? "Envoi…" : "Envoyer la demande"}</span>
             </span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true">
               <path d="M4 12h15M13 6l6 6-6 6" />
@@ -152,7 +186,6 @@ export default function ContactForm({
         <p style={{ fontSize: 16, lineHeight: 1.8, color: "var(--muted)", margin: "20px 0 10px", maxWidth: 460 }} id="dmsg">
           {dmsg}
         </p>
-        <p style={{ fontSize: 12, color: "var(--muted)", marginBottom: 36 }}>Maquette : le formulaire n&apos;envoie pas encore de message.</p>
         <button type="button" className="btn" id="again" ref={againRef} onClick={again}>
           <span className="t">
             <span>Nouvelle demande</span>

@@ -6,10 +6,17 @@ import { ensureGsap, gsap } from "@/lib/gsap";
 import { isReducedMotion } from "@/lib/motion";
 import Arrow from "@/components/icons/Arrow";
 
-const INTRO_TEXT =
-  "Nous dessinons chaque espace avec vous, puis nous le construisons. Plans, matériaux, menuiserie, éclairage et finitions sont pris en charge par une seule équipe, du premier rendez-vous à la remise des clés.";
-
-export default function IntroSection() {
+export default function IntroSection({
+  label,
+  text,
+  image1,
+  image2,
+}: {
+  label: string;
+  text: string;
+  image1: string;
+  image2: string;
+}) {
   const wrapRef = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
@@ -24,14 +31,14 @@ export default function IntroSection() {
     return () => tw.scrollTrigger?.kill();
   }, []);
 
-  const words = INTRO_TEXT.split(/\s+/);
+  const words = text.split(/\s+/);
 
   return (
     <section className="sec">
       <div className="wrap intro">
         <div>
           <div className="lab navy" data-up>
-            (01) &nbsp;Le studio
+            (01) &nbsp;{label}
           </div>
         </div>
         <div>
@@ -45,11 +52,11 @@ export default function IntroSection() {
           </p>
           <div className="pic">
             <div className="par" style={{ flex: 1.3, aspectRatio: "4/5" }}>
-              <img src="/img/dressing-eclaire.jpg" alt="Dressing aux étagères en bois éclairées" loading="lazy" />
+              <img src={image1} alt="" loading="lazy" />
             </div>
             <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 28 }}>
               <div className="par" style={{ aspectRatio: "1/1" }}>
-                <img src="/img/salle-de-bain.jpg" alt="Salle de bain avec mosaïque de verre et accessoires noirs" loading="lazy" />
+                <img src={image2} alt="" loading="lazy" />
               </div>
               <Link href="/services" className="btn mag" style={{ alignSelf: "flex-start" }}>
                 <span className="t">

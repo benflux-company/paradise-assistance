@@ -109,7 +109,13 @@ export default function Lightbox({ projects }: { projects: ProjectView[] }) {
     const curState = (window as unknown as { __curState?: (el: Element | null) => void }).__curState;
     curState?.(null);
     getLenis()?.stop();
-    // eslint-disable-next-line react-hooks/immutability -- document.body is a real external DOM node, not component state
+    // `html` (not `body`) is the page's actual vertical scroll container
+    // (globals.css only clips `html`'s x-axis) — on touch viewports Lenis
+    // isn't instantiated (see Chrome.tsx), so native scroll is live and
+    // locking only `body` lets the page behind the lightbox keep scrolling.
+    // eslint-disable-next-line react-hooks/immutability -- these are real external DOM nodes, not component state
+    document.documentElement.style.overflow = "hidden";
+    // eslint-disable-next-line react-hooks/immutability -- see above
     document.body.style.overflow = "hidden";
   }
 
@@ -117,6 +123,7 @@ export default function Lightbox({ projects }: { projects: ProjectView[] }) {
     const done = () => {
       setOpen(false);
       getLenis()?.start();
+      document.documentElement.style.overflow = "";
       document.body.style.overflow = "";
       lastFocusRef.current?.focus();
     };

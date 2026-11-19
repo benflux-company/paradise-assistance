@@ -4,10 +4,8 @@ import { useEffect, useRef } from "react";
 import { ensureGsap, gsap, ScrollTrigger } from "@/lib/gsap";
 import { isReducedMotion } from "@/lib/motion";
 
-const WORDS = ["Cuisines", "Dressings", "Murs TV", "Salons", "Salles de bain", "Sur mesure"];
-const REPEATED = [...WORDS, ...WORDS];
-
-export default function Marquee() {
+export default function Marquee({ items }: { items: string[] }) {
+  const REPEATED = [...items, ...items];
   const sectionRef = useRef<HTMLDivElement>(null);
   const mqRef = useRef<HTMLDivElement>(null);
 

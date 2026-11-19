@@ -21,10 +21,6 @@ env:
   APP_ENV: dev
   PORT: "3000"
   PUBLIC_SITE_URL: https://paradise-dev.benfluxgroup.com
-  # First-boot seed: set to "true" for the very first deploy of an empty
-  # database, then remove it — the seed upserts content, but must not run on
-  # every pod restart.
-  RUN_SEED: "true"
 
 resources:
   requests:

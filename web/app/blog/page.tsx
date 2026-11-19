@@ -4,6 +4,7 @@ import RevealMain from "@/components/RevealMain";
 import PageHead from "@/components/PageHead";
 import BlogList from "@/components/blog/BlogList";
 import { getFeaturedPost, getPosts } from "@/lib/queries";
+import { getSiteContent } from "@/lib/siteContent";
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -12,14 +13,14 @@ export const metadata: Metadata = {
 };
 
 export default async function BlogPage() {
-  const [featured, posts] = await Promise.all([getFeaturedPost(), getPosts()]);
+  const [featured, posts, content] = await Promise.all([getFeaturedPost(), getPosts(), getSiteContent()]);
 
   return (
     <RevealMain id="p-blog" dataT="Blog">
       <PageHead
         current="Blog"
-        titleLines={["Le", "journal"]}
-        description="Conseils de fabrication, coulisses de chantier et idées d'aménagement pour mieux préparer votre projet."
+        titleLines={[content.blog_title_line1, content.blog_title_line2]}
+        description={content.blog_description}
       />
       {featured && (
         <section style={{ paddingBottom: 120 }}>

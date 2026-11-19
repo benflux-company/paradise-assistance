@@ -153,6 +153,16 @@ model Settings {
   updatedAt        DateTime @updatedAt
 }
 
+// Freeform editable text/image blocks for sections that aren't their own
+// content model (hero copy, section headings, page intros, etc.) — keyed by
+// a stable string id defined in lib/siteContent.ts rather than one column
+// per field, so new editable blocks don't need a migration each time.
+model SiteContent {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
 model ContactRequest {
   id          String        @id @default(cuid())
   name        String

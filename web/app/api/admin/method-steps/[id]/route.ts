@@ -1,0 +1,23 @@
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { prisma } from "@/lib/prisma";
+
+const schema = z.object({
+  title: z.string().min(1).optional(),
+  description: z.string().min(1).optional(),
+  image: z.string().min(1).optional(),
+});
+
+export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const parsed = schema.safeParse(await req.json().catch(() => null));
+  if (!parsed.success) return NextResponse.json({ error: "Données invalides." }, { status: 400 });
+  const step = await prisma.methodStep.update({ where: { id }, data: parsed.data });
+  return NextResponse.json({ step });
+}
+
+export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  await prisma.methodStep.delete({ where: { id } });
+  return NextResponse.json({ ok: true });
+}

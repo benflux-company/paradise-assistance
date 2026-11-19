@@ -3,6 +3,7 @@ import RevealMain from "@/components/RevealMain";
 import PageHead from "@/components/PageHead";
 import ContactForm from "@/components/contact/ContactForm";
 import { getSettings } from "@/lib/queries";
+import { getSiteContent } from "@/lib/siteContent";
 import { orPlaceholder } from "@/lib/placeholders";
 
 export const metadata: Metadata = {
@@ -11,14 +12,14 @@ export const metadata: Metadata = {
 };
 
 export default async function ContactPage() {
-  const settings = await getSettings();
+  const [settings, content] = await Promise.all([getSettings(), getSiteContent()]);
 
   return (
     <RevealMain id="p-contact" dataT="Contact">
       <PageHead
         current="Contact"
-        titleLines={["Parlons de", "votre projet"]}
-        description="Décrivez-nous votre espace et vos envies. Nous vous recontactons pour convenir d'une visite et établir un devis."
+        titleLines={[content.contact_title_line1, content.contact_title_line2]}
+        description={content.contact_description}
       />
       <section style={{ paddingBottom: 140 }}>
         <div className="wrap cgrid">
@@ -46,7 +47,7 @@ export default async function ContactPage() {
       <section style={{ paddingBottom: 160 }}>
         <div className="wrap" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(380px,100%),1fr))", gap: 24 }}>
           <div className="par" style={{ height: 460 }}>
-            <img src="/img/chantier-cuisine.jpg" alt="Pose d'une cuisine sur mesure en cours de chantier" loading="lazy" />
+            <img src={content.contact_bottom_image} alt="" loading="lazy" />
           </div>
           {settings.mapEmbed ? (
             <iframe
