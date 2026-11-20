@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/benflux-company/paradise-assistance
-  tag: initial
+  tag: acbc73c1cbec10f26e88562df81aa3c31a4f4c25
   pullPolicy: Always
 
 service:
@@ -10,7 +10,7 @@ service:
   targetPort: 3000
 
 ingress:
-  host: paradise.benfluxgroup.com
+  host: paradis-assistance.com
 
 healthCheck:
   liveness: /api/health
@@ -20,11 +20,7 @@ env:
   NODE_ENV: production
   APP_ENV: production
   PORT: "3000"
-  PUBLIC_SITE_URL: https://paradise.benfluxgroup.com
-  # First-boot seed: set to "true" for the very first deploy of an empty
-  # database, then remove it — the seed upserts content, but must not run on
-  # every pod restart.
-  RUN_SEED: "true"
+  PUBLIC_SITE_URL: https://paradis-assistance.com
 
 resources:
   requests:
