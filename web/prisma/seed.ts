@@ -1,10 +1,10 @@
 import { PrismaClient, PostCategory } from "@prisma/client";
 import bcrypt from "bcrypt";
 import { POSTS, SERVICES, METHOD_STEPS, FAQS } from "../lib/data";
-import { REAL_PROJECTS, REAL_HERO_SLIDES, REAL_HERO_VIDEO_URL, CLOUDINARY_PHOTO_BASE } from "./realProjects";
+import { REAL_PROJECTS, REAL_HERO_SLIDES, REAL_INTRO_IMAGES, CLOUDINARY_PHOTO_BASE, CLOUDINARY_NAMED_BASE } from "./realProjects";
 
 const prisma = new PrismaClient();
-const photoUrl = (n: number) => `${CLOUDINARY_PHOTO_BASE}${n}.jpg`;
+const photoUrl = (p: number | string) => (typeof p === "number" ? `${CLOUDINARY_PHOTO_BASE}${p}.jpg` : `${CLOUDINARY_NAMED_BASE}${p}.jpg`);
 
 const POST_CATEGORY_MAP: Record<string, PostCategory> = {
   Conseils: PostCategory.CONSEILS,
@@ -46,17 +46,23 @@ async function main() {
     },
   });
 
+  console.log("Seed : images de la section « Le studio »…");
+  await prisma.siteContent.upsert({
+    where: { key: "intro_image_1" },
+    update: { value: photoUrl(REAL_INTRO_IMAGES[0]) },
+    create: { key: "intro_image_1", value: photoUrl(REAL_INTRO_IMAGES[0]) },
+  });
+  await prisma.siteContent.upsert({
+    where: { key: "intro_image_2" },
+    update: { value: photoUrl(REAL_INTRO_IMAGES[1]) },
+    create: { key: "intro_image_2", value: photoUrl(REAL_INTRO_IMAGES[1]) },
+  });
+
   console.log("Seed : diaporama du hero…");
   await prisma.heroSlide.deleteMany();
   for (const [i, s] of REAL_HERO_SLIDES.entries()) {
     await prisma.heroSlide.create({
-      data: {
-        image: photoUrl(s.photo),
-        video: s.video ? REAL_HERO_VIDEO_URL : null,
-        alt: s.alt,
-        caption: s.caption,
-        order: i,
-      },
+      data: { image: photoUrl(s.photo), video: null, alt: s.alt, caption: s.caption, order: i },
     });
   }
 
