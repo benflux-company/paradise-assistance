@@ -40,10 +40,10 @@ async function main() {
     create: {
       id: "settings",
       phone: "+243 991 836 082, +227 78 555 6933",
-      email: "contact@paradis-assistances.com",
+      email: "contact@paradis-assistance.com",
       address: "Kinshasa, av. réf. IPG",
       hours: "Du lundi au vendredi de 07h30 à 17h00",
-      contactEmail: "contact@paradis-assistances.com,jacquesdjulama7@gmail.com",
+      contactEmail: "contact@paradis-assistance.com,jacquesdjulama7@gmail.com",
       // TODO(client) : tranches de budget réelles à fournir — ne doit jamais
       // rester en l'état en production, ce sont des valeurs provisoires.
       budgetRanges: ["[TRANCHE 1]", "[TRANCHE 2]", "[TRANCHE 3]", "À définir"],
