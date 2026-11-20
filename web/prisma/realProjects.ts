@@ -11,7 +11,10 @@ export type RealProject = {
   longDesc: string;
   featured: boolean;
   wide: boolean;
-  photos: number[];
+  // A number resolves against CLOUDINARY_PHOTO_BASE + "IMG_<n>.jpg" (the
+  // first 98-photo batch); a string is a named public_id from a later batch
+  // (resolved against CLOUDINARY_NAMED_BASE below).
+  photos: (number | string)[];
 };
 
 const CAT = {
@@ -50,7 +53,7 @@ function mk(
   title: string,
   cat: ProjectCategory,
   detail: string,
-  photos: number[],
+  photos: (number | string)[],
   opts: { featured?: boolean; wide?: boolean } = {}
 ): RealProject {
   const t = TEMPLATES[cat];
@@ -145,15 +148,23 @@ export const REAL_PROJECTS: RealProject[] = [
   mk("cuisine-blanche-marbre-compacte", "Cuisine blanche, marbre compact", CAT.C, "blanche et compacte avec plan marbre", [5826]),
   mk("chantier-echafaudage-3", "Chantier, échafaudage de façade", CAT.S, "avec échafaudage de façade", [5827]),
   mk("mur-tv-bois-salon-orange", "Mur TV, lambris bois, salon chaleureux", CAT.T, "en lambris bois dans un salon aux tons chauds", [5828]),
+
+  // Deuxième lot de photos (envoyé séparément par le client)
+  mk("cuisine-salon-anneaux-dores", "Cuisine ouverte, suspensions en anneaux dorés", CAT.C, "ouverte avec suspensions en anneaux dorés et niches en bois", ["gold_ring_kitchen_1", "gold_ring_kitchen_2"]),
+  mk("mur-tv-marbre-cheminee", "Mur TV en marbre avec cheminée intégrée", CAT.T, "en marbre veiné avec cheminée et niches éclairées", ["mur_tv_marbre_cheminee"], { featured: true, wide: true }),
+  mk("bar-bouteilles-roses", "Bar, suspensions en bouteilles roses", CAT.S, "en bois avec suspensions en bouteilles roses et rangement à vin", ["bar_bouteilles_roses"]),
+  mk("cuisine-couloir-led-frigo", "Cuisine en couloir, niche et vitrine LED", CAT.C, "en couloir avec niche décorative en bois et vitrine rétroéclairée", ["cuisine_couloir_led"]),
 ];
 
-export const REAL_HERO_SLIDES = [
-  { photo: 5762, video: true, alt: "Bar privé en bois sur mesure", caption: "Bar privé en bois massif, sur mesure" },
-  { photo: 5795, video: false, alt: "Mur TV en marbre avec niches dorées", caption: "Mur TV en marbre et niches dorées" },
-  { photo: 5781, video: false, alt: "Cuisine avec îlot en bois clair", caption: "Cuisine, îlot en bois clair" },
+// Pas de vidéo dans le hero (retirée sur demande du client) — 3 photos fixes.
+export const REAL_HERO_SLIDES: Array<{ photo: number | string; alt: string; caption: string }> = [
+  { photo: "marble_amber_pendants", alt: "Cuisine, îlot en marbre et suspensions ambrées", caption: "Cuisine, îlot en marbre et suspensions ambrées" },
+  { photo: "mur_tv_marbre_cheminee", alt: "Mur TV en marbre avec cheminée intégrée", caption: "Mur TV en marbre et cheminée intégrée" },
+  { photo: "gold_ring_kitchen_1", alt: "Cuisine ouverte, suspensions en anneaux dorés", caption: "Cuisine ouverte, suspensions en anneaux dorés" },
 ];
 
-export const REAL_HERO_VIDEO_URL =
-  "https://res.cloudinary.com/de6pf7joi/video/upload/so_5,eo_17/v1795172175/paradise-assistance-production/hero/hero-video-cuisine.mp4";
+// Les 2 photos mises en avant dans la section "Le studio" de l'accueil.
+export const REAL_INTRO_IMAGES: [string, string] = ["gold_ring_kitchen_1", "gold_ring_kitchen_2"];
 
 export const CLOUDINARY_PHOTO_BASE = "https://res.cloudinary.com/de6pf7joi/image/upload/paradise-assistance-production/realisations/IMG_";
+export const CLOUDINARY_NAMED_BASE = "https://res.cloudinary.com/de6pf7joi/image/upload/paradise-assistance-production/realisations/";
