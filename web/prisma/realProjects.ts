@@ -157,13 +157,9 @@ export const REAL_PROJECTS: RealProject[] = [
   mk("cuisine-ilot-marbre-orchidee", "Cuisine, îlot en marbre cannelé", CAT.C, "à façade cannelée avec suspensions ambrées et vitrine rétroéclairée", ["cuisine_ilot_marbre_orchidee"], { featured: true }),
 ];
 
-// Vidéo d'ambiance sur la première slide (choisie par le client parmi
-// plusieurs essais) ; les autres slides restent des photos fixes.
-export const REAL_HERO_VIDEO_URL =
-  "https://res.cloudinary.com/de6pf7joi/video/upload/so_3,eo_15/v1795207788/paradise-assistance-production/hero/hero-video-salon.mp4";
-
-export const REAL_HERO_SLIDES: Array<{ photo: number | string; alt: string; caption: string; video?: boolean }> = [
-  { photo: "marble_amber_pendants", alt: "Cuisine, îlot en marbre et suspensions ambrées", caption: "Cuisine, îlot en marbre et suspensions ambrées", video: true },
+// Pas de vidéo dans le hero (confirmé par le client) — 3 photos fixes.
+export const REAL_HERO_SLIDES: Array<{ photo: number | string; alt: string; caption: string }> = [
+  { photo: "marble_amber_pendants", alt: "Cuisine, îlot en marbre et suspensions ambrées", caption: "Cuisine, îlot en marbre et suspensions ambrées" },
   { photo: "mur_tv_marbre_cheminee", alt: "Mur TV en marbre avec cheminée intégrée", caption: "Mur TV en marbre et cheminée intégrée" },
   { photo: "gold_ring_kitchen_1", alt: "Cuisine ouverte, suspensions en anneaux dorés", caption: "Cuisine ouverte, suspensions en anneaux dorés" },
 ];
