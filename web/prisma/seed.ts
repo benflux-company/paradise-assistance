@@ -61,6 +61,10 @@ async function main() {
   }
 
   console.log("Seed : projets du portfolio (vraies réalisations)…");
+  // Supprime tout projet qui ne fait plus partie de la liste réelle (ancien
+  // contenu de démo, ou un projet retiré) — l'upsert par slug ci-dessous ne
+  // supprime jamais, il ne fait que créer/mettre à jour.
+  await prisma.project.deleteMany({ where: { slug: { notIn: REAL_PROJECTS.map((p) => p.slug) } } });
   for (const [i, p] of REAL_PROJECTS.entries()) {
     const project = await prisma.project.upsert({
       where: { slug: p.slug },
