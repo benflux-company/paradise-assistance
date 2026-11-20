@@ -1,16 +1,10 @@
-import { PrismaClient, ProjectCategory, PostCategory } from "@prisma/client";
+import { PrismaClient, PostCategory } from "@prisma/client";
 import bcrypt from "bcrypt";
-import { PROJECTS, POSTS, SERVICES, METHOD_STEPS, HERO_SLIDES, FAQS } from "../lib/data";
+import { POSTS, SERVICES, METHOD_STEPS, FAQS } from "../lib/data";
+import { REAL_PROJECTS, REAL_HERO_SLIDES, REAL_HERO_VIDEO_URL, CLOUDINARY_PHOTO_BASE } from "./realProjects";
 
 const prisma = new PrismaClient();
-
-const PROJECT_CATEGORY_MAP: Record<string, ProjectCategory> = {
-  Cuisines: ProjectCategory.CUISINES,
-  "Murs TV": ProjectCategory.MURS_TV,
-  Dressings: ProjectCategory.DRESSINGS,
-  Salons: ProjectCategory.SALONS,
-  "Salles de bain": ProjectCategory.SALLES_DE_BAIN,
-};
+const photoUrl = (n: number) => `${CLOUDINARY_PHOTO_BASE}${n}.jpg`;
 
 const POST_CATEGORY_MAP: Record<string, PostCategory> = {
   Conseils: PostCategory.CONSEILS,
@@ -44,9 +38,7 @@ async function main() {
       address: "Kinshasa, av. réf. IPG",
       hours: "Du lundi au vendredi de 07h30 à 17h00",
       contactEmail: "contact@paradis-assistance.com,jacquesdjulama7@gmail.com",
-      // TODO(client) : tranches de budget réelles à fournir — ne doit jamais
-      // rester en l'état en production, ce sont des valeurs provisoires.
-      budgetRanges: ["[TRANCHE 1]", "[TRANCHE 2]", "[TRANCHE 3]", "À définir"],
+      budgetRanges: ["Moins de 500 $", "500 - 1 500 $", "1 500 - 5 000 $", "Plus de 5 000 $"],
       projectTypes: ["Cuisine", "Dressing", "Mur TV", "Salle de bain", "Salon", "Aménagement complet"],
       seoDefaultTitle: "Ets Paradis Assistance — Architecture d'intérieur",
       seoDefaultDesc:
@@ -56,45 +48,49 @@ async function main() {
 
   console.log("Seed : diaporama du hero…");
   await prisma.heroSlide.deleteMany();
-  for (const [i, s] of HERO_SLIDES.entries()) {
+  for (const [i, s] of REAL_HERO_SLIDES.entries()) {
     await prisma.heroSlide.create({
-      data: { image: `/img/${s.image}.jpg`, alt: s.alt, caption: s.caption, order: i },
+      data: {
+        image: photoUrl(s.photo),
+        video: s.video ? REAL_HERO_VIDEO_URL : null,
+        alt: s.alt,
+        caption: s.caption,
+        order: i,
+      },
     });
   }
 
-  console.log("Seed : projets du portfolio…");
-  // Les 7 premiers projets (même ordre que l'ancien carrousel horizontal de
-  // l'accueil) sont marqués "mis en avant" pour peupler ce carrousel.
-  for (const [i, p] of PROJECTS.entries()) {
+  console.log("Seed : projets du portfolio (vraies réalisations)…");
+  for (const [i, p] of REAL_PROJECTS.entries()) {
     const project = await prisma.project.upsert({
       where: { slug: p.slug },
       update: {
         title: p.title,
-        category: PROJECT_CATEGORY_MAP[p.category],
+        category: p.category,
         shortDesc: p.shortDesc,
         longDesc: p.longDesc,
-        wide: !!p.wide,
-        featured: i < 7,
+        wide: p.wide,
+        featured: p.featured,
         order: i,
       },
       create: {
         slug: p.slug,
         title: p.title,
-        category: PROJECT_CATEGORY_MAP[p.category],
+        category: p.category,
         shortDesc: p.shortDesc,
         longDesc: p.longDesc,
-        wide: !!p.wide,
-        featured: i < 7,
+        wide: p.wide,
+        featured: p.featured,
         order: i,
       },
     });
     await prisma.projectImage.deleteMany({ where: { projectId: project.id } });
-    for (const [j, image] of p.gallery.entries()) {
+    for (const [j, photo] of p.photos.entries()) {
       await prisma.projectImage.create({
         data: {
           projectId: project.id,
-          url: `/img/${image}.jpg`,
-          alt: p.alt,
+          url: photoUrl(photo),
+          alt: p.title,
           order: j,
           cover: j === 0,
         },
