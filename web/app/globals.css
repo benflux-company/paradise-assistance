@@ -84,16 +84,16 @@ body.mo #mm{pointer-events:auto}
 .pg{display:none}.pg.on{display:block}
 
 /* split */
-.ln{display:block;overflow:hidden;padding-bottom:.06em}
+.ln{display:block;overflow:hidden;padding-bottom:.22em;margin-bottom:-.22em}
 .ln>span{display:block}
-.w{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.08em}
+.w{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.22em;margin-bottom:-.22em}
 .w>span{display:inline-block}
 
 /* HERO */
 .hero{position:relative;height:100vh;height:100svh;min-height:640px;color:#fff;overflow:hidden;background:var(--navy2)}
 .hero .sl{position:absolute;inset:0;opacity:0;visibility:hidden;z-index:0}
 .hero .sl.on{opacity:1;visibility:visible}
-.hero .sl img{width:100%;height:100%;object-fit:cover}
+.hero .sl img{width:100%;height:100%;object-fit:cover;object-position:center 22%}
 .hero .ov{position:absolute;inset:0;background:rgba(18,20,38,.42);z-index:5}
 .hero .ct{position:absolute;left:0;right:0;bottom:0;padding-bottom:64px;z-index:6}
 .hero h1{font-size:clamp(60px,10vw,168px);line-height:.9;font-weight:300}

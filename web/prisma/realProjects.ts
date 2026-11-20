@@ -157,11 +157,16 @@ export const REAL_PROJECTS: RealProject[] = [
   mk("cuisine-ilot-marbre-orchidee", "Cuisine, îlot en marbre cannelé", CAT.C, "à façade cannelée avec suspensions ambrées et vitrine rétroéclairée", ["cuisine_ilot_marbre_orchidee"], { featured: true }),
 ];
 
-// Pas de vidéo dans le hero (confirmé par le client) — 3 photos fixes.
+// Pas de vidéo dans le hero (confirmé par le client) — les 7 photos du
+// deuxième lot, choisies pour leur netteté et leur style moderne.
 export const REAL_HERO_SLIDES: Array<{ photo: number | string; alt: string; caption: string }> = [
   { photo: "marble_amber_pendants", alt: "Cuisine, îlot en marbre et suspensions ambrées", caption: "Cuisine, îlot en marbre et suspensions ambrées" },
   { photo: "mur_tv_marbre_cheminee", alt: "Mur TV en marbre avec cheminée intégrée", caption: "Mur TV en marbre et cheminée intégrée" },
   { photo: "gold_ring_kitchen_1", alt: "Cuisine ouverte, suspensions en anneaux dorés", caption: "Cuisine ouverte, suspensions en anneaux dorés" },
+  { photo: "gold_ring_kitchen_2", alt: "Cuisine ouverte, suspensions en anneaux dorés", caption: "Cuisine ouverte sur le salon" },
+  { photo: "bar_bouteilles_roses", alt: "Bar, suspensions en bouteilles roses", caption: "Bar, suspensions en bouteilles roses" },
+  { photo: "cuisine_couloir_led", alt: "Cuisine en couloir, niche et vitrine LED", caption: "Cuisine en couloir, niche et vitrine LED" },
+  { photo: "cuisine_ilot_marbre_orchidee", alt: "Cuisine, îlot en marbre cannelé", caption: "Cuisine, îlot en marbre cannelé" },
 ];
 
 // Les 2 photos mises en avant dans la section "Le studio" de l'accueil.
