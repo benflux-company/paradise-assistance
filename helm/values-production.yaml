@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/benflux-company/paradise-assistance
-  tag: e1db21d146a64af3166b7f45d4e38b0f9a4d12af
+  tag: 02669b183df7b3211044ade8840bc6b6eec49d81
   pullPolicy: Always
 
 service:
