@@ -10,7 +10,7 @@ service:
   targetPort: 3000
 
 ingress:
-  host: paradise.benfluxgroup.com
+  host: paradis-assistance.com
 
 healthCheck:
   liveness: /api/health
@@ -20,11 +20,7 @@ env:
   NODE_ENV: production
   APP_ENV: production
   PORT: "3000"
-  PUBLIC_SITE_URL: https://paradise.benfluxgroup.com
-  # First-boot seed: set to "true" for the very first deploy of an empty
-  # database, then remove it — the seed upserts content, but must not run on
-  # every pod restart.
-  RUN_SEED: "true"
+  PUBLIC_SITE_URL: https://paradis-assistance.com
 
 resources:
   requests:
