@@ -11,7 +11,11 @@ export const metadata: Metadata = {
 };
 
 export default async function GaleriePage() {
-  const [projects, content] = await Promise.all([getProjects(), getSiteContent()]);
+  const [allProjects, content] = await Promise.all([getProjects(), getSiteContent()]);
+  // Les photos de chantier (travaux en cours) sont très similaires entre elles
+  // (échafaudages, murs bruts…) : elles donnent une impression de doublons
+  // dans une galerie pensée pour montrer des réalisations finies.
+  const projects = allProjects.filter((p) => !p.slug.includes("chantier"));
 
   return (
     <RevealMain id="p-galerie" dataT="Galerie">

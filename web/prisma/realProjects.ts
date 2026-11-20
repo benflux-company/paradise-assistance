@@ -149,11 +149,10 @@ export const REAL_PROJECTS: RealProject[] = [
   mk("chantier-echafaudage-3", "Chantier, échafaudage de façade", CAT.S, "avec échafaudage de façade", [5827]),
   mk("mur-tv-bois-salon-orange", "Mur TV, lambris bois, salon chaleureux", CAT.T, "en lambris bois dans un salon aux tons chauds", [5828]),
 
-  // Deuxième lot de photos (envoyé séparément par le client)
-  mk("cuisine-salon-anneaux-dores", "Cuisine ouverte, suspensions en anneaux dorés", CAT.C, "ouverte avec suspensions en anneaux dorés et niches en bois", ["gold_ring_kitchen_1", "gold_ring_kitchen_2"]),
-  mk("mur-tv-marbre-cheminee", "Mur TV en marbre avec cheminée intégrée", CAT.T, "en marbre veiné avec cheminée et niches éclairées", ["mur_tv_marbre_cheminee"], { featured: true, wide: true }),
-  mk("bar-bouteilles-roses", "Bar, suspensions en bouteilles roses", CAT.S, "en bois avec suspensions en bouteilles roses et rangement à vin", ["bar_bouteilles_roses"]),
-  mk("cuisine-couloir-led-frigo", "Cuisine en couloir, niche et vitrine LED", CAT.C, "en couloir avec niche décorative en bois et vitrine rétroéclairée", ["cuisine_couloir_led"]),
+  // Deuxième lot de photos (envoyé séparément par le client) — seule la photo
+  // ci-dessous est inédite ; les 4 autres du lot sont les mêmes pièces que des
+  // projets déjà listés plus haut (mêmes photos, juste reprises pour le hero)
+  // donc elles ne sont pas dupliquées ici en tant que projets séparés.
   mk("cuisine-ilot-marbre-orchidee", "Cuisine, îlot en marbre cannelé", CAT.C, "à façade cannelée avec suspensions ambrées et vitrine rétroéclairée", ["cuisine_ilot_marbre_orchidee"], { featured: true }),
 ];
 
