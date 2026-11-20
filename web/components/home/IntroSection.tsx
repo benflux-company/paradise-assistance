@@ -12,11 +12,13 @@ export default function IntroSection({
   text,
   image1,
   image2,
+  video1,
 }: {
   label: string;
   text: string;
   image1: string;
   image2: string;
+  video1?: string;
 }) {
   const wrapRef = useRef<HTMLParagraphElement>(null);
 
@@ -53,7 +55,18 @@ export default function IntroSection({
           </p>
           <div className="pic">
             <div className="par" style={{ flex: 1.3, aspectRatio: "4/5" }}>
-              <FadeImg src={image1} alt="" loading="lazy" />
+              {video1 ? (
+                <video
+                  src={video1}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+              ) : (
+                <FadeImg src={image1} alt="" loading="lazy" />
+              )}
             </div>
             <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 28 }}>
               <div className="par" style={{ aspectRatio: "1/1" }}>

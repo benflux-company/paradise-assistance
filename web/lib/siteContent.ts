@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 
-export type ContentFieldType = "text" | "textarea" | "image" | "list";
+export type ContentFieldType = "text" | "textarea" | "image" | "video" | "list";
 
 export type ContentFieldDef = {
   key: string;
@@ -27,6 +27,7 @@ export const CONTENT_FIELDS: ContentFieldDef[] = [
   { key: "intro_text", label: "Texte", type: "textarea", section: "Accueil — le studio", default: "Nous dessinons chaque espace avec vous, puis nous le construisons. Plans, matériaux, menuiserie, éclairage et finitions sont pris en charge par une seule équipe, du premier rendez-vous à la remise des clés." },
   { key: "intro_image_1", label: "Photo 1", type: "image", section: "Accueil — le studio", default: "/img/dressing-eclaire.jpg" },
   { key: "intro_image_2", label: "Photo 2", type: "image", section: "Accueil — le studio", default: "/img/salle-de-bain.jpg" },
+  { key: "intro_video_1", label: "Vidéo à la place de la photo 1 (optionnel)", type: "video", section: "Accueil — le studio", hint: "Si une vidéo est définie ici, elle remplace la Photo 1 ci-dessus.", default: "" },
 
   // Accueil — bandeau défilant
   {
