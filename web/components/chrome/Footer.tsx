@@ -4,10 +4,13 @@ import Link from "next/link";
 import { scrollToTop } from "@/lib/motion";
 import { orPlaceholder } from "@/lib/placeholders";
 import type { SettingsView } from "@/lib/queries";
+import { FacebookIcon, InstagramIcon, TiktokIcon, WhatsappIcon, LinkedinIcon } from "@/components/icons/SocialIcons";
 
-function socialsLine(settings: SettingsView): string {
-  const socials = [settings.facebook, settings.instagram, settings.tiktok, settings.whatsapp, settings.linkedin].filter(Boolean);
-  return socials.length ? socials.join(" · ") : "[RÉSEAUX SOCIAUX]";
+// WhatsApp est stocké comme numéro de téléphone (ex. "+243 991 836 082") et
+// converti ici en lien wa.me ; les autres réseaux sont déjà des URLs completes.
+function whatsappHref(value: string) {
+  const digits = value.replace(/[^\d]/g, "");
+  return digits ? `https://wa.me/${digits}` : "";
 }
 
 export default function Footer({ settings }: { settings: SettingsView }) {
@@ -47,9 +50,41 @@ export default function Footer({ settings }: { settings: SettingsView }) {
           <div className="col">
             <div className="h">Contact</div>
             <span>{orPlaceholder(settings.phone, "[TÉLÉPHONE]")}</span>
-            <span>{orPlaceholder(settings.email, "[ADRESSE E-MAIL]")}</span>
+            {settings.email ? (
+              <a href={`mailto:${settings.email}`} className="ul">
+                {settings.email}
+              </a>
+            ) : (
+              <span>[ADRESSE E-MAIL]</span>
+            )}
             <span>{orPlaceholder(settings.address, "[ADRESSE DU BUREAU]")}</span>
-            <span>{socialsLine(settings)}</span>
+            <div className="soc" style={{ display: "flex", gap: 14, marginTop: 8 }}>
+              {settings.facebook && (
+                <a href={settings.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                  <FacebookIcon />
+                </a>
+              )}
+              {settings.instagram && (
+                <a href={settings.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                  <InstagramIcon />
+                </a>
+              )}
+              {settings.tiktok && (
+                <a href={settings.tiktok} target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+                  <TiktokIcon />
+                </a>
+              )}
+              {settings.whatsapp && (
+                <a href={whatsappHref(settings.whatsapp)} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+                  <WhatsappIcon />
+                </a>
+              )}
+              {settings.linkedin && (
+                <a href={settings.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                  <LinkedinIcon />
+                </a>
+              )}
+            </div>
           </div>
         </div>
         <div className="huge sf" id="huge">

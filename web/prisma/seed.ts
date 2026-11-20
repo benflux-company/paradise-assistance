@@ -38,6 +38,8 @@ async function main() {
       address: "Kinshasa, av. réf. IPG",
       hours: "Du lundi au vendredi de 07h30 à 17h00",
       contactEmail: "contact@paradis-assistance.com,jacquesdjulama7@gmail.com",
+      whatsapp: "+243991836082",
+      mapEmbed: "https://www.google.com/maps?q=Kinshasa%2C%20avenue%20r%C3%A9f.%20IPG&output=embed",
       budgetRanges: ["Moins de 500 $", "500 - 1 500 $", "1 500 - 5 000 $", "Plus de 5 000 $"],
       projectTypes: ["Cuisine", "Dressing", "Mur TV", "Salle de bain", "Salon", "Aménagement complet"],
       seoDefaultTitle: "Ets Paradis Assistance — Architecture d'intérieur",

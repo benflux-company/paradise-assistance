@@ -72,7 +72,7 @@ export default function Hero({
       });
 
       const media = cur.querySelector("img,video");
-      gsap.fromTo(media, { scale: 1.3 }, { scale: 1.12, duration: 2, ease: "expo.out" });
+      gsap.fromTo(media, { scale: 1.08 }, { scale: 1, duration: 2, ease: "expo.out" });
 
       gsap.to(cur, {
         clipPath: "inset(0 0% 0 0%)",
@@ -103,7 +103,7 @@ export default function Hero({
       htimer();
     }
 
-    gsap.fromTo(".hero .sl.on img,.hero .sl.on video", { scale: 1.35 }, { scale: 1.12, duration: 2.6, ease: "expo.out" });
+    gsap.fromTo(".hero .sl.on img,.hero .sl.on video", { scale: 1.1 }, { scale: 1, duration: 2.6, ease: "expo.out" });
 
     const scrollTweens: gsap.core.Tween[] = [];
     if (!touch && heroRef.current) {
