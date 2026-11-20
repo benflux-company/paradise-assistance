@@ -44,6 +44,11 @@ export const CONTENT_FIELDS: ContentFieldDef[] = [
   { key: "portfolio_title_line2", label: "Titre (ligne 2)", type: "text", section: "Page Portfolio", default: "réalisations" },
   { key: "portfolio_description", label: "Texte d'introduction", type: "textarea", section: "Page Portfolio", default: "Cuisines, murs TV, dressings et salles de bain. Chaque projet est dessiné, fabriqué et posé par notre équipe. Cliquez sur une image pour l'ouvrir en grand." },
 
+  // Galerie
+  { key: "galerie_title_line1", label: "Titre (ligne 1)", type: "text", section: "Page Galerie", default: "Notre" },
+  { key: "galerie_title_line2", label: "Titre (ligne 2)", type: "text", section: "Page Galerie", default: "galerie" },
+  { key: "galerie_description", label: "Texte d'introduction", type: "textarea", section: "Page Galerie", default: "Toutes nos photos de chantier, réunies au même endroit. Recherchez par mot-clé ou cliquez sur une image pour l'ouvrir en grand." },
+
   // Services
   { key: "services_title_line1", label: "Titre (ligne 1)", type: "text", section: "Page Prestations", default: "Nos" },
   { key: "services_title_line2", label: "Titre (ligne 2)", type: "text", section: "Page Prestations", default: "services" },

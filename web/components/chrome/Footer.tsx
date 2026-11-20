@@ -29,6 +29,9 @@ export default function Footer({ settings }: { settings: SettingsView }) {
             <Link href="/portfolio" className="ul">
               Portfolio
             </Link>
+            <Link href="/galerie" className="ul">
+              Galerie
+            </Link>
             <Link href="/services" className="ul">
               Services
             </Link>
