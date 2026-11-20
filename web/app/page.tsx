@@ -33,6 +33,7 @@ export default async function AccueilPage() {
         text={content.intro_text}
         image1={content.intro_image_1}
         image2={content.intro_image_2}
+        video1={content.intro_video_1 || undefined}
       />
       <HorizontalProjects projects={projects} />
       <ExpertiseList services={services} />

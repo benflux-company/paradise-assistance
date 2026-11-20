@@ -48,13 +48,14 @@ export default function SiteContentManager({
       {saved && <div className="adm-success" style={{ marginBottom: 12 }}>Enregistré.</div>}
       <div className="adm-form">
         {fields.map((f) =>
-          f.type === "image" ? (
+          f.type === "image" || f.type === "video" ? (
             <ImageField
               key={f.key}
               label={f.label}
               value={draft[f.key]}
               onChange={(url) => setDraft((d) => ({ ...d, [f.key]: url }))}
               uploadsEnabled={uploadsEnabled}
+              accept={f.type === "video" ? "video/*" : "image/*"}
             />
           ) : (
             <div className="adm-field" key={f.key}>
