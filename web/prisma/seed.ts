@@ -1,7 +1,7 @@
 import { PrismaClient, PostCategory } from "@prisma/client";
 import bcrypt from "bcrypt";
 import { POSTS, SERVICES, METHOD_STEPS, FAQS } from "../lib/data";
-import { REAL_PROJECTS, REAL_HERO_SLIDES, REAL_INTRO_IMAGES, CLOUDINARY_PHOTO_BASE, CLOUDINARY_NAMED_BASE } from "./realProjects";
+import { REAL_PROJECTS, REAL_HERO_SLIDES, REAL_HERO_VIDEO_URL, REAL_INTRO_IMAGES, CLOUDINARY_PHOTO_BASE, CLOUDINARY_NAMED_BASE } from "./realProjects";
 
 const prisma = new PrismaClient();
 const photoUrl = (p: number | string) => (typeof p === "number" ? `${CLOUDINARY_PHOTO_BASE}${p}.jpg` : `${CLOUDINARY_NAMED_BASE}${p}.jpg`);
@@ -62,7 +62,7 @@ async function main() {
   await prisma.heroSlide.deleteMany();
   for (const [i, s] of REAL_HERO_SLIDES.entries()) {
     await prisma.heroSlide.create({
-      data: { image: photoUrl(s.photo), video: null, alt: s.alt, caption: s.caption, order: i },
+      data: { image: photoUrl(s.photo), video: s.video ? REAL_HERO_VIDEO_URL : null, alt: s.alt, caption: s.caption, order: i },
     });
   }
 
