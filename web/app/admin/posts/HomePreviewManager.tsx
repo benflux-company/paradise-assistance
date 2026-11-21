@@ -6,10 +6,12 @@ import { ArrowUp, ArrowDown, X } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/admin/ui/Card";
 import { Select } from "@/components/admin/ui/Field";
 import Button from "@/components/admin/ui/Button";
+import { useConfirm } from "@/components/admin/ui/ConfirmDialog";
 
 type Item = { id: string; title: string };
 
 export default function HomePreviewManager({ posts, allPosts }: { posts: Item[]; allPosts: Item[] }) {
+  const confirm = useConfirm();
   const router = useRouter();
   const [items, setItems] = useState(posts);
   const [adding, setAdding] = useState("");
@@ -35,8 +37,15 @@ export default function HomePreviewManager({ posts, allPosts }: { posts: Item[];
     save(next);
   }
 
-  function remove(id: string) {
-    save(items.filter((i) => i.id !== id));
+  async function remove(item: Item) {
+    const ok = await confirm({
+      title: "Retirer cet article de l'accueil ?",
+      description: `« ${item.title} » ne sera plus affiché à la une de la page d'accueil (l'article lui-même n'est pas supprimé).`,
+      confirmLabel: "Retirer",
+      destructive: true,
+    });
+    if (!ok) return;
+    save(items.filter((i) => i.id !== item.id));
   }
 
   function add() {
@@ -70,7 +79,7 @@ export default function HomePreviewManager({ posts, allPosts }: { posts: Item[];
                   <Button variant="ghost" size="icon" onClick={() => move(i, 1)} disabled={busy || i === items.length - 1} aria-label="Descendre">
                     <ArrowDown className="size-4" />
                   </Button>
-                  <Button variant="ghost" size="icon" onClick={() => remove(item.id)} disabled={busy} aria-label="Retirer">
+                  <Button variant="ghost" size="icon" onClick={() => remove(item)} disabled={busy} aria-label="Retirer">
                     <X className="size-4" />
                   </Button>
                 </div>
