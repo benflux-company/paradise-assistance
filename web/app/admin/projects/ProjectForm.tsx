@@ -2,6 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { Card, CardContent, CardFooter } from "@/components/admin/ui/Card";
+import { Input, Textarea, Select, Label, FieldGroup, FieldHint } from "@/components/admin/ui/Field";
+import Checkbox from "@/components/admin/ui/Checkbox";
+import Button from "@/components/admin/ui/Button";
 
 const CATEGORIES: Array<{ value: string; label: string }> = [
   { value: "CUISINES", label: "Cuisines" },
@@ -50,7 +55,6 @@ export default function ProjectForm({
     published: initial?.published ?? true,
   });
   const [slugTouched, setSlugTouched] = useState(Boolean(initial?.slug));
-  const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
   function set<K extends keyof ProjectFormValues>(key: K, v: ProjectFormValues[K]) {
@@ -59,7 +63,6 @@ export default function ProjectForm({
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError("");
     setBusy(true);
     const url = projectId ? `/api/admin/projects/${projectId}` : "/api/admin/projects";
     const method = projectId ? "PATCH" : "POST";
@@ -70,110 +73,87 @@ export default function ProjectForm({
     });
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
-      setError(data.error ?? "Une erreur est survenue.");
+      toast.error(data.error ?? "Une erreur est survenue.");
       setBusy(false);
       return;
     }
     if (!projectId) {
       const data = await res.json();
+      toast.success("Réalisation créée.");
       router.push(`/admin/projects/${data.project.id}`);
     } else {
+      toast.success("Réalisation enregistrée.");
       router.refresh();
     }
     setBusy(false);
   }
 
   return (
-    <form className="adm-form" onSubmit={onSubmit}>
-      {error && <div className="adm-error">{error}</div>}
+    <form onSubmit={onSubmit}>
+      <Card>
+        <CardContent className="space-y-4">
+          <FieldGroup>
+            <Label htmlFor="title">Titre</Label>
+            <Input
+              id="title"
+              required
+              value={values.title}
+              onChange={(e) => {
+                set("title", e.target.value);
+                if (!slugTouched) set("slug", slugify(e.target.value));
+              }}
+            />
+          </FieldGroup>
 
-      <div className="adm-field">
-        <label htmlFor="title">Titre</label>
-        <input
-          id="title"
-          type="text"
-          required
-          value={values.title}
-          onChange={(e) => {
-            set("title", e.target.value);
-            if (!slugTouched) set("slug", slugify(e.target.value));
-          }}
-        />
-      </div>
+          <FieldGroup>
+            <Label htmlFor="slug">Slug (URL)</Label>
+            <Input
+              id="slug"
+              required
+              value={values.slug}
+              onChange={(e) => {
+                setSlugTouched(true);
+                set("slug", e.target.value);
+              }}
+            />
+            <FieldHint>Utilisé dans l&apos;adresse de la page et comme identifiant dans la galerie.</FieldHint>
+          </FieldGroup>
 
-      <div className="adm-field">
-        <label htmlFor="slug">Slug (URL)</label>
-        <input
-          id="slug"
-          type="text"
-          required
-          value={values.slug}
-          onChange={(e) => {
-            setSlugTouched(true);
-            set("slug", e.target.value);
-          }}
-        />
-        <div className="hint">Utilisé dans l&apos;adresse de la page et comme identifiant dans la galerie.</div>
-      </div>
+          <FieldGroup>
+            <Label htmlFor="category">Catégorie</Label>
+            <Select id="category" value={values.category} onChange={(e) => set("category", e.target.value)}>
+              {CATEGORIES.map((c) => (
+                <option key={c.value} value={c.value}>
+                  {c.label}
+                </option>
+              ))}
+            </Select>
+          </FieldGroup>
 
-      <div className="adm-field">
-        <label htmlFor="category">Catégorie</label>
-        <select id="category" value={values.category} onChange={(e) => set("category", e.target.value)}>
-          {CATEGORIES.map((c) => (
-            <option key={c.value} value={c.value}>
-              {c.label}
-            </option>
-          ))}
-        </select>
-      </div>
+          <FieldGroup>
+            <Label htmlFor="shortDesc">Description courte</Label>
+            <Textarea id="shortDesc" required value={values.shortDesc} onChange={(e) => set("shortDesc", e.target.value)} />
+            <FieldHint>Affichée dans la grille du portfolio.</FieldHint>
+          </FieldGroup>
 
-      <div className="adm-field">
-        <label htmlFor="shortDesc">Description courte</label>
-        <textarea
-          id="shortDesc"
-          required
-          value={values.shortDesc}
-          onChange={(e) => set("shortDesc", e.target.value)}
-        />
-        <div className="hint">Affichée dans la grille du portfolio.</div>
-      </div>
+          <FieldGroup>
+            <Label htmlFor="longDesc">Description détaillée</Label>
+            <Textarea id="longDesc" required value={values.longDesc} onChange={(e) => set("longDesc", e.target.value)} />
+            <FieldHint>Affichée dans l&apos;aperçu détaillé du projet.</FieldHint>
+          </FieldGroup>
 
-      <div className="adm-field">
-        <label htmlFor="longDesc">Description détaillée</label>
-        <textarea id="longDesc" required value={values.longDesc} onChange={(e) => set("longDesc", e.target.value)} />
-        <div className="hint">Affichée dans l&apos;aperçu détaillé du projet.</div>
-      </div>
-
-      <div className="adm-field row">
-        <input
-          id="featured"
-          type="checkbox"
-          checked={values.featured}
-          onChange={(e) => set("featured", e.target.checked)}
-        />
-        <label htmlFor="featured">Mettre en avant (carrousel d&apos;accueil)</label>
-      </div>
-
-      <div className="adm-field row">
-        <input id="wide" type="checkbox" checked={values.wide} onChange={(e) => set("wide", e.target.checked)} />
-        <label htmlFor="wide">Vignette large dans la grille</label>
-      </div>
-
-      <div className="adm-field row">
-        <input
-          id="published"
-          type="checkbox"
-          checked={values.published}
-          onChange={(e) => set("published", e.target.checked)}
-        />
-        <label htmlFor="published">Publié sur le site</label>
-      </div>
-
-      <div className="adm-form-actions">
-        <button type="submit" className="adm-btn primary" disabled={busy}>
-          {busy ? "Enregistrement…" : projectId ? "Enregistrer" : "Créer la réalisation"}
-        </button>
-      </div>
+          <div className="flex flex-col gap-3 sm:flex-row sm:gap-6">
+            <Checkbox id="featured" checked={values.featured} onChange={(v) => set("featured", v)} label="Mettre en avant (carrousel d'accueil)" />
+            <Checkbox id="wide" checked={values.wide} onChange={(v) => set("wide", v)} label="Vignette large dans la grille" />
+            <Checkbox id="published" checked={values.published} onChange={(v) => set("published", v)} label="Publié sur le site" />
+          </div>
+        </CardContent>
+        <CardFooter>
+          <Button type="submit" loading={busy}>
+            {projectId ? "Enregistrer" : "Créer la réalisation"}
+          </Button>
+        </CardFooter>
+      </Card>
     </form>
   );
 }

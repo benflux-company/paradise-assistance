@@ -70,10 +70,10 @@ function mk(
 }
 
 export const REAL_PROJECTS: RealProject[] = [
+  mk("cuisine-blanche-suspensions-dorees", "Cuisine blanche, suspensions dorées", CAT.C, "blanche avec plaque de cuisson à gaz et suspensions dorées", [5778, 5780], { featured: true }),
   mk("bar-bois-sur-mesure", "Bar privé en bois", CAT.S, "en bois massif avec étagère à verres et rangement bouteilles", [5762, 5773, 5788, 5808], { featured: true, wide: true }),
   mk("mur-tv-lambris-bleu-marine", "Mur TV, lambris bleu marine", CAT.T, "en lambris bleu marine avec meuble bas blanc", [5772, 5787], { featured: true }),
   mk("mur-tv-marbre-led-bleue", "Mur TV, marbre et bois sous LED bleue", CAT.T, "en marbre et lambris bois, souligné par un bandeau LED bleu", [5747, 5758]),
-  mk("cuisine-blanche-suspensions-dorees", "Cuisine blanche, suspensions dorées", CAT.C, "blanche avec plaque de cuisson à gaz et suspensions dorées", [5778, 5780], { featured: true }),
   mk("cuisine-ilot-bois-clair", "Cuisine, îlot en bois clair", CAT.C, "avec îlot en bois clair et tabourets de bar", [5781, 5782], { featured: true }),
   mk("chambre-tete-de-lit-bleu-nuit", "Chambre, tête de lit capitonnée", CAT.S, "avec tête de lit capitonnée bleu nuit", [5764, 5789]),
   mk("escalier-bois-sur-mesure", "Escalier en bois sur mesure", CAT.S, "en structure et marches bois, en cours de pose", [5766, 5792, 5807], { featured: true }),

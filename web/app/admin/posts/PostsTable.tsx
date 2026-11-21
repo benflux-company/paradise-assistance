@@ -3,6 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { ArrowUp, ArrowDown, Pencil, Trash2 } from "lucide-react";
+import { Table, Thead, Th, Tbody, Tr, Td } from "@/components/admin/ui/Table";
+import Button from "@/components/admin/ui/Button";
+import Badge from "@/components/admin/ui/Badge";
+import { useConfirm } from "@/components/admin/ui/ConfirmDialog";
 
 type Row = {
   id: string;
@@ -21,6 +27,7 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 
 export default function PostsTable({ posts }: { posts: Row[] }) {
+  const confirm = useConfirm();
   const router = useRouter();
   const [rows, setRows] = useState(posts);
   const [busyId, setBusyId] = useState<string | null>(null);
@@ -52,72 +59,78 @@ export default function PostsTable({ posts }: { posts: Row[] }) {
     });
     setRows((r) => r.map((x) => (x.id === row.id ? { ...x, published: !x.published } : x)));
     setBusyId(null);
+    toast.success(row.published ? "Article repassé en brouillon." : "Article publié.");
   }
 
   async function remove(row: Row) {
-    if (!confirm(`Supprimer définitivement « ${row.title} » ?`)) return;
+    const ok = await confirm({
+      title: "Supprimer cet article ?",
+      description: `« ${row.title} » sera supprimé définitivement du blog.`,
+      confirmLabel: "Supprimer",
+      destructive: true,
+    });
+    if (!ok) return;
     setBusyId(row.id);
     await fetch(`/api/admin/posts/${row.id}`, { method: "DELETE" });
     setRows((r) => r.filter((x) => x.id !== row.id));
     setBusyId(null);
+    toast.success("Article supprimé.");
   }
 
-  if (rows.length === 0) return <div className="adm-empty">Aucun article pour le moment.</div>;
+  if (rows.length === 0) return <p className="text-sm text-muted-foreground">Aucun article pour le moment.</p>;
 
   return (
-    <table className="adm-table">
-      <thead>
+    <Table>
+      <Thead>
         <tr>
-          <th></th>
-          <th>Photo</th>
-          <th>Titre</th>
-          <th>Catégorie</th>
-          <th>À la une</th>
-          <th>Statut</th>
-          <th></th>
+          <Th />
+          <Th>Photo</Th>
+          <Th>Titre</Th>
+          <Th>Catégorie</Th>
+          <Th>À la une</Th>
+          <Th>Statut</Th>
+          <Th />
         </tr>
-      </thead>
-      <tbody>
+      </Thead>
+      <Tbody>
         {rows.map((row, i) => (
-          <tr key={row.id}>
-            <td>
-              <div className="adm-row-actions">
-                <button className="adm-btn sm" type="button" onClick={() => move(i, -1)} disabled={i === 0}>
-                  ↑
-                </button>
-                <button className="adm-btn sm" type="button" onClick={() => move(i, 1)} disabled={i === rows.length - 1}>
-                  ↓
-                </button>
+          <Tr key={row.id}>
+            <Td>
+              <div className="flex gap-1">
+                <Button variant="ghost" size="icon" onClick={() => move(i, -1)} disabled={i === 0} aria-label="Monter">
+                  <ArrowUp className="size-4" />
+                </Button>
+                <Button variant="ghost" size="icon" onClick={() => move(i, 1)} disabled={i === rows.length - 1} aria-label="Descendre">
+                  <ArrowDown className="size-4" />
+                </Button>
               </div>
-            </td>
-            <td>{row.cover ? <img className="thumb" src={row.cover} alt="" /> : "—"}</td>
-            <td>{row.title}</td>
-            <td>{CATEGORY_LABELS[row.category] ?? row.category}</td>
-            <td>{row.featured ? <span className="adm-badge ok">Oui</span> : <span className="adm-badge">Non</span>}</td>
-            <td>
-              <button
-                type="button"
-                className={`adm-badge ${row.published ? "ok" : "warn"}`}
-                style={{ border: "none", cursor: "pointer" }}
-                onClick={() => togglePublished(row)}
-                disabled={busyId === row.id}
-              >
-                {row.published ? "Publié" : "Brouillon"}
+            </Td>
+            <Td>{row.cover ? <img className="size-11 rounded-md object-cover" src={row.cover} alt="" /> : "—"}</Td>
+            <Td className="font-medium">{row.title}</Td>
+            <Td>{CATEGORY_LABELS[row.category] ?? row.category}</Td>
+            <Td>{row.featured ? <Badge variant="success">Oui</Badge> : <Badge variant="muted">Non</Badge>}</Td>
+            <Td>
+              <button type="button" onClick={() => togglePublished(row)} disabled={busyId === row.id}>
+                <Badge variant={row.published ? "success" : "warning"} className="cursor-pointer">
+                  {row.published ? "Publié" : "Brouillon"}
+                </Badge>
               </button>
-            </td>
-            <td>
-              <div className="adm-row-actions">
-                <Link href={`/admin/posts/${row.id}`} className="adm-btn sm">
-                  Modifier
+            </Td>
+            <Td>
+              <div className="flex items-center justify-end gap-1">
+                <Link href={`/admin/posts/${row.id}`}>
+                  <Button variant="ghost" size="icon" aria-label="Modifier">
+                    <Pencil className="size-4" />
+                  </Button>
                 </Link>
-                <button className="adm-btn sm danger" type="button" onClick={() => remove(row)} disabled={busyId === row.id}>
-                  Supprimer
-                </button>
+                <Button variant="ghost" size="icon" onClick={() => remove(row)} disabled={busyId === row.id} aria-label="Supprimer">
+                  <Trash2 className="size-4 text-destructive" />
+                </Button>
               </div>
-            </td>
-          </tr>
+            </Td>
+          </Tr>
         ))}
-      </tbody>
-    </table>
+      </Tbody>
+    </Table>
   );
 }

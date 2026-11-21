@@ -225,7 +225,11 @@ body.mo #mm{pointer-events:auto}
 .pitem{grid-column:span 4;background:none;border:0;text-align:left;cursor:pointer;display:block;color:inherit}
 .pitem.wide{grid-column:span 8}
 .pitem .im{overflow:hidden;position:relative;aspect-ratio:4/5}
-.pitem.wide .im{aspect-ratio:16/10}
+/* 5/3 (pas 16/10) compense l'espace des colonnes du grid 12 cols : une
+   carte "wide" (span 8) et une carte normale (span 4) partagent la même
+   rangée, et seul ce ratio les rend réellement de même hauteur une fois
+   le gap de 32px pris en compte. */
+.pitem.wide .im{aspect-ratio:5/3}
 .pitem .im img{width:100%;height:100%;object-fit:cover;transition:transform 1.4s var(--o),filter 1s}
 .pitem .im .hv{position:absolute;inset:0;background:rgba(38,43,81,.5);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .6s}
 .pitem .im .hv span{color:#fff;font-size:11px;letter-spacing:.3em;text-transform:uppercase;border:1px solid #fff;border-radius:999px;padding:14px 24px;transform:translateY(16px);transition:transform .7s var(--o)}

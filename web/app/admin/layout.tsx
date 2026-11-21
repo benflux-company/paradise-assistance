@@ -1,6 +1,6 @@
 import { getSession } from "@/lib/auth";
-import AdminNav from "./AdminNav";
-import "./admin.css";
+import AdminShell from "@/components/admin/layout/AdminShell";
+import "./admin-tailwind.css";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await getSession();
@@ -9,15 +9,12 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   // Middleware already redirects unauthenticated requests before they reach
   // any other /admin page, but this layout wraps the login page too.
   if (!session) {
-    return <div className="adm">{children}</div>;
+    return <div className="admin-root">{children}</div>;
   }
 
   return (
-    <div className="adm">
-      <div className="adm-shell">
-        <AdminNav userName={session.name} />
-        <main className="adm-main">{children}</main>
-      </div>
+    <div className="admin-root">
+      <AdminShell userName={session.name}>{children}</AdminShell>
     </div>
   );
 }

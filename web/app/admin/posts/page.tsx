@@ -1,5 +1,8 @@
 import Link from "next/link";
+import { Plus } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import PageHeader from "@/components/admin/layout/PageHeader";
+import Button from "@/components/admin/ui/Button";
 import PostsTable from "./PostsTable";
 import HomePreviewManager from "./HomePreviewManager";
 
@@ -10,15 +13,17 @@ export default async function PostsAdminPage() {
 
   return (
     <>
-      <div className="adm-head">
-        <div>
-          <h1>Blog & actualités</h1>
-          <p>{posts.length} article(s).</p>
-        </div>
-        <Link href="/admin/posts/new" className="adm-btn primary">
-          Nouvel article
-        </Link>
-      </div>
+      <PageHeader
+        title="Blog & actualités"
+        description={`${posts.length} article(s).`}
+        actions={
+          <Link href="/admin/posts/new">
+            <Button>
+              <Plus className="size-4" /> Nouvel article
+            </Button>
+          </Link>
+        }
+      />
 
       <HomePreviewManager
         posts={posts
@@ -28,19 +33,17 @@ export default async function PostsAdminPage() {
         allPosts={posts.map((p) => ({ id: p.id, title: p.title }))}
       />
 
-      <div className="adm-card" style={{ padding: 0, overflowX: "auto" }}>
-        <PostsTable
-          posts={posts.map((p) => ({
-            id: p.id,
-            title: p.title,
-            slug: p.slug,
-            category: p.category,
-            featured: p.featured,
-            published: p.published,
-            cover: p.coverImage,
-          }))}
-        />
-      </div>
+      <PostsTable
+        posts={posts.map((p) => ({
+          id: p.id,
+          title: p.title,
+          slug: p.slug,
+          category: p.category,
+          featured: p.featured,
+          published: p.published,
+          cover: p.coverImage,
+        }))}
+      />
     </>
   );
 }

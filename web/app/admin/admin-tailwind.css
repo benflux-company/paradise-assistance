@@ -1,0 +1,127 @@
+/* Tailwind for /admin only — imported solely by app/admin/layout.tsx, so
+   Next.js never ships this stylesheet to public pages (same isolation the
+   project already relies on for admin.css vs. globals.css: a stylesheet
+   imported by one route segment's layout is never sent to routes outside
+   it). We import Tailwind's theme + utilities layers directly instead of
+   the full "tailwindcss" package — that skips Preflight (the base-tag
+   reset for h1/p/button/...), so there is zero chance of this stylesheet
+   changing how any element looks even if it were ever loaded elsewhere. */
+/* Not wrapped in layer(utilities): globals.css (loaded on every page,
+   admin included, via the shared root layout) has an unlayered `* {
+   margin:0; padding:0 }` reset — CSS cascade layers always lose to
+   unlayered rules no matter the specificity, so a layered Tailwind utility
+   like .pl-72 would silently get zeroed out by that reset. Emitting
+   utilities unlayered instead means normal specificity applies, where
+   every class (0,1,0) already beats a bare `*` selector (0,0,0). */
+@import "tailwindcss/theme.css" layer(theme) source(none);
+@import "tailwindcss/utilities.css" source(none);
+@source "./";
+@source "../../components/admin";
+
+@theme {
+  --color-background: #f7f7fa;
+  --color-foreground: #262b51;
+  --color-muted: #f1f1f4;
+  --color-muted-foreground: #5d6070;
+  --color-card: #ffffff;
+  --color-card-foreground: #262b51;
+  --color-border: #e1e2e8;
+  --color-input: #e1e2e8;
+  --color-ring: #262b51;
+
+  --color-brand: #262b51;
+  --color-brand-foreground: #ffffff;
+  --color-brand-50: #eef0f7;
+  --color-brand-100: #d5d7e2;
+  --color-brand-600: #1b1f3d;
+  --color-brand-700: #14172e;
+
+  --color-gold: #b08a3e;
+  --color-gold-foreground: #ffffff;
+
+  --color-destructive: #d4453a;
+  --color-destructive-foreground: #ffffff;
+  --color-success: #1f8a4c;
+  --color-success-foreground: #ffffff;
+  --color-warning: #b07a1e;
+  --color-warning-foreground: #ffffff;
+
+  --color-sidebar: #262b51;
+  --color-sidebar-foreground: #e7e8f0;
+  --color-sidebar-muted: #aeb1c9;
+  --color-sidebar-accent: #323768;
+  --color-sidebar-border: #3a3f6e;
+
+  --font-sans: "Poppins", system-ui, sans-serif;
+
+  --text-2xs: 0.6875rem;
+  --text-2xs--line-height: 1rem;
+
+  --radius-sm: 0.3125rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.625rem;
+  --radius-xl: 0.875rem;
+
+  --shadow-card: 0 1px 3px 0 rgb(38 43 81 / 0.06), 0 1px 2px -1px rgb(38 43 81 / 0.06);
+  --shadow-dropdown: 0 8px 24px -6px rgb(38 43 81 / 0.16), 0 2px 6px -2px rgb(38 43 81 / 0.08);
+  --shadow-modal: 0 24px 48px -12px rgb(38 43 81 / 0.3);
+
+  --animate-fade-in: fade-in 0.2s ease-out;
+  --animate-fade-in-up: fade-in-up 0.25s ease-out;
+}
+
+@layer utilities {
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes fade-in-up {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+/* Tailwind's Preflight normally resets these — since we skip Preflight on
+   purpose, we restore just enough of it, scoped under .admin-root, for the
+   admin UI's own plain tags (box-sizing, margins, button/input chrome,
+   list bullets) to behave the way every Tailwind component in the DropX
+   reference expects. This never reaches anything outside .admin-root.
+   Everything below is wrapped in :where() — real Preflight's own trick —
+   so these resets contribute ZERO specificity: a single Tailwind utility
+   class (e.g. .bg-brand) must always be able to override them. Without
+   :where(), a selector like ".admin-root button" (class+tag) would
+   outrank a plain ".bg-brand" (one class) and silently win instead. */
+.admin-root {
+  font-family: var(--font-sans);
+  color: var(--color-foreground);
+  line-height: 1.5;
+}
+:where(.admin-root) :where(*, ::before, ::after) {
+  box-sizing: border-box;
+}
+:where(.admin-root) :where(h1, h2, h3, h4, p, figure) {
+  margin: 0;
+}
+:where(.admin-root) :where(h1, h2, h3, h4) {
+  font-size: inherit;
+  font-weight: inherit;
+}
+:where(.admin-root) :where(ul, ol) {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+:where(.admin-root) :where(button, input, select, textarea) {
+  font: inherit;
+  color: inherit;
+  border-radius: 0;
+  background-color: transparent;
+}
+:where(.admin-root) :where(button) {
+  cursor: pointer;
+}
+:where(.admin-root) :where(img, video) {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
