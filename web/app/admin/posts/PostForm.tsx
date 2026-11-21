@@ -2,7 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import ImageField from "../ImageField";
+import { toast } from "sonner";
+import { Card, CardContent, CardFooter } from "@/components/admin/ui/Card";
+import { Input, Textarea, Select, Label, FieldGroup, FieldHint } from "@/components/admin/ui/Field";
+import Dropzone from "@/components/admin/ui/Dropzone";
+import Checkbox from "@/components/admin/ui/Checkbox";
+import Button from "@/components/admin/ui/Button";
 
 const CATEGORIES: Array<{ value: string; label: string }> = [
   { value: "CONSEILS", label: "Conseils" },
@@ -51,7 +56,6 @@ export default function PostForm({
     published: initial?.published ?? true,
   });
   const [slugTouched, setSlugTouched] = useState(Boolean(initial?.slug));
-  const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
   function set<K extends keyof PostFormValues>(key: K, v: PostFormValues[K]) {
@@ -60,7 +64,6 @@ export default function PostForm({
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError("");
     setBusy(true);
     const url = postId ? `/api/admin/posts/${postId}` : "/api/admin/posts";
     const method = postId ? "PATCH" : "POST";
@@ -71,99 +74,93 @@ export default function PostForm({
     });
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
-      setError(data.error ?? "Une erreur est survenue.");
+      toast.error(data.error ?? "Une erreur est survenue.");
       setBusy(false);
       return;
     }
     if (!postId) {
       const data = await res.json();
+      toast.success("Article créé.");
       router.push(`/admin/posts/${data.post.id}`);
     } else {
+      toast.success("Article enregistré.");
       router.refresh();
     }
     setBusy(false);
   }
 
   return (
-    <form className="adm-form" onSubmit={onSubmit} style={{ maxWidth: 820 }}>
-      {error && <div className="adm-error">{error}</div>}
+    <form onSubmit={onSubmit}>
+      <Card>
+        <CardContent className="space-y-4">
+          <FieldGroup>
+            <Label htmlFor="title">Titre</Label>
+            <Input
+              id="title"
+              required
+              value={values.title}
+              onChange={(e) => {
+                set("title", e.target.value);
+                if (!slugTouched) set("slug", slugify(e.target.value));
+              }}
+            />
+          </FieldGroup>
 
-      <div className="adm-field">
-        <label htmlFor="title">Titre</label>
-        <input
-          id="title"
-          type="text"
-          required
-          value={values.title}
-          onChange={(e) => {
-            set("title", e.target.value);
-            if (!slugTouched) set("slug", slugify(e.target.value));
-          }}
-        />
-      </div>
+          <FieldGroup>
+            <Label htmlFor="slug">Slug (URL)</Label>
+            <Input
+              id="slug"
+              required
+              value={values.slug}
+              onChange={(e) => {
+                setSlugTouched(true);
+                set("slug", e.target.value);
+              }}
+            />
+          </FieldGroup>
 
-      <div className="adm-field">
-        <label htmlFor="slug">Slug (URL)</label>
-        <input
-          id="slug"
-          type="text"
-          required
-          value={values.slug}
-          onChange={(e) => {
-            setSlugTouched(true);
-            set("slug", e.target.value);
-          }}
-        />
-      </div>
+          <FieldGroup>
+            <Label htmlFor="category">Catégorie</Label>
+            <Select id="category" value={values.category} onChange={(e) => set("category", e.target.value)}>
+              {CATEGORIES.map((c) => (
+                <option key={c.value} value={c.value}>
+                  {c.label}
+                </option>
+              ))}
+            </Select>
+          </FieldGroup>
 
-      <div className="adm-field">
-        <label htmlFor="category">Catégorie</label>
-        <select id="category" value={values.category} onChange={(e) => set("category", e.target.value)}>
-          {CATEGORIES.map((c) => (
-            <option key={c.value} value={c.value}>
-              {c.label}
-            </option>
-          ))}
-        </select>
-      </div>
+          <Dropzone label="Photo de couverture" value={values.coverImage} onChange={(url) => set("coverImage", url)} uploadsEnabled={uploadsEnabled} />
 
-      <ImageField label="Photo de couverture" value={values.coverImage} onChange={(url) => set("coverImage", url)} uploadsEnabled={uploadsEnabled} />
+          <FieldGroup>
+            <Label htmlFor="excerpt">Résumé</Label>
+            <Textarea id="excerpt" required value={values.excerpt} onChange={(e) => set("excerpt", e.target.value)} />
+            <FieldHint>Affiché dans la liste des articles et en aperçu sur l&apos;accueil.</FieldHint>
+          </FieldGroup>
 
-      <div className="adm-field">
-        <label htmlFor="excerpt">Résumé</label>
-        <textarea id="excerpt" required value={values.excerpt} onChange={(e) => set("excerpt", e.target.value)} />
-        <div className="hint">Affiché dans la liste des articles et en aperçu sur l&apos;accueil.</div>
-      </div>
+          <FieldGroup>
+            <Label htmlFor="content">Contenu de l&apos;article</Label>
+            <Textarea
+              id="content"
+              required
+              value={values.content}
+              onChange={(e) => set("content", e.target.value)}
+              className="min-h-80 font-mono text-xs"
+            />
+            <FieldHint>Format Markdown : **gras**, *italique*, titres avec ##, listes avec -, liens avec [texte](url).</FieldHint>
+          </FieldGroup>
 
-      <div className="adm-field">
-        <label htmlFor="content">Contenu de l&apos;article</label>
-        <textarea
-          id="content"
-          required
-          value={values.content}
-          onChange={(e) => set("content", e.target.value)}
-          style={{ minHeight: 320, fontFamily: "monospace", fontSize: 13 }}
-        />
-        <div className="hint">
-          Format Markdown : **gras**, *italique*, titres avec ##, listes avec -, liens avec [texte](url).
-        </div>
-      </div>
-
-      <div className="adm-field row">
-        <input id="featured" type="checkbox" checked={values.featured} onChange={(e) => set("featured", e.target.checked)} />
-        <label htmlFor="featured">Mettre à la une (en haut de la page blog)</label>
-      </div>
-
-      <div className="adm-field row">
-        <input id="published" type="checkbox" checked={values.published} onChange={(e) => set("published", e.target.checked)} />
-        <label htmlFor="published">Publié sur le site</label>
-      </div>
-
-      <div className="adm-form-actions">
-        <button type="submit" className="adm-btn primary" disabled={busy}>
-          {busy ? "Enregistrement…" : postId ? "Enregistrer" : "Créer l'article"}
-        </button>
-      </div>
+          <div className="flex flex-col gap-3 sm:flex-row sm:gap-6">
+            <Checkbox id="featured" checked={values.featured} onChange={(v) => set("featured", v)} label="Mettre à la une (en haut de la page blog)" />
+            <Checkbox id="published" checked={values.published} onChange={(v) => set("published", v)} label="Publié sur le site" />
+          </div>
+        </CardContent>
+        <CardFooter>
+          <Button type="submit" loading={busy}>
+            {postId ? "Enregistrer" : "Créer l'article"}
+          </Button>
+        </CardFooter>
+      </Card>
     </form>
   );
 }

@@ -1,21 +1,21 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "sonner";
+import { Card, CardContent, CardFooter } from "@/components/admin/ui/Card";
+import { Input, Label, FieldGroup } from "@/components/admin/ui/Field";
+import Button from "@/components/admin/ui/Button";
 
 export default function AccountForm() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
   const [busy, setBusy] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError("");
-    setSuccess(false);
     if (newPassword !== confirmPassword) {
-      setError("Les deux mots de passe ne correspondent pas.");
+      toast.error("Les deux mots de passe ne correspondent pas.");
       return;
     }
     setBusy(true);
@@ -26,9 +26,9 @@ export default function AccountForm() {
     });
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
-      setError(data.error ?? "Échec de la mise à jour.");
+      toast.error(data.error ?? "Échec de la mise à jour.");
     } else {
-      setSuccess(true);
+      toast.success("Mot de passe mis à jour.");
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
@@ -37,49 +37,51 @@ export default function AccountForm() {
   }
 
   return (
-    <form className="adm-form" onSubmit={onSubmit}>
-      {error && <div className="adm-error">{error}</div>}
-      {success && <div className="adm-success">Mot de passe mis à jour.</div>}
-      <div className="adm-field">
-        <label htmlFor="currentPassword">Mot de passe actuel</label>
-        <input
-          id="currentPassword"
-          type="password"
-          required
-          autoComplete="current-password"
-          value={currentPassword}
-          onChange={(e) => setCurrentPassword(e.target.value)}
-        />
-      </div>
-      <div className="adm-field">
-        <label htmlFor="newPassword">Nouveau mot de passe</label>
-        <input
-          id="newPassword"
-          type="password"
-          required
-          minLength={8}
-          autoComplete="new-password"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-        />
-      </div>
-      <div className="adm-field">
-        <label htmlFor="confirmPassword">Confirmer le nouveau mot de passe</label>
-        <input
-          id="confirmPassword"
-          type="password"
-          required
-          minLength={8}
-          autoComplete="new-password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-        />
-      </div>
-      <div className="adm-form-actions">
-        <button type="submit" className="adm-btn primary" disabled={busy}>
-          {busy ? "Mise à jour…" : "Mettre à jour le mot de passe"}
-        </button>
-      </div>
+    <form onSubmit={onSubmit}>
+      <Card>
+        <CardContent className="max-w-sm space-y-4">
+          <FieldGroup>
+            <Label htmlFor="currentPassword">Mot de passe actuel</Label>
+            <Input
+              id="currentPassword"
+              type="password"
+              required
+              autoComplete="current-password"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+            />
+          </FieldGroup>
+          <FieldGroup>
+            <Label htmlFor="newPassword">Nouveau mot de passe</Label>
+            <Input
+              id="newPassword"
+              type="password"
+              required
+              minLength={8}
+              autoComplete="new-password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
+          </FieldGroup>
+          <FieldGroup>
+            <Label htmlFor="confirmPassword">Confirmer le nouveau mot de passe</Label>
+            <Input
+              id="confirmPassword"
+              type="password"
+              required
+              minLength={8}
+              autoComplete="new-password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+          </FieldGroup>
+        </CardContent>
+        <CardFooter>
+          <Button type="submit" loading={busy}>
+            Mettre à jour le mot de passe
+          </Button>
+        </CardFooter>
+      </Card>
     </form>
   );
 }

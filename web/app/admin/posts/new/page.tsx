@@ -1,21 +1,24 @@
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { uploadsConfigured } from "@/lib/upload";
+import PageHeader from "@/components/admin/layout/PageHeader";
+import Button from "@/components/admin/ui/Button";
 import PostForm from "../PostForm";
 
 export default function NewPostPage() {
   return (
     <>
-      <div className="adm-head">
-        <div>
-          <h1>Nouvel article</h1>
-        </div>
-        <Link href="/admin/posts" className="adm-btn">
-          Retour
-        </Link>
-      </div>
-      <div className="adm-card">
-        <PostForm uploadsEnabled={uploadsConfigured()} />
-      </div>
+      <PageHeader
+        title="Nouvel article"
+        actions={
+          <Link href="/admin/posts">
+            <Button variant="outline">
+              <ArrowLeft className="size-4" /> Retour
+            </Button>
+          </Link>
+        }
+      />
+      <PostForm uploadsEnabled={uploadsConfigured()} />
     </>
   );
 }

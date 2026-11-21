@@ -2,10 +2,16 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { ArrowUp, ArrowDown, X } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/admin/ui/Card";
+import { Select } from "@/components/admin/ui/Field";
+import Button from "@/components/admin/ui/Button";
+import { useConfirm } from "@/components/admin/ui/ConfirmDialog";
 
 type Item = { id: string; title: string };
 
 export default function HomePreviewManager({ posts, allPosts }: { posts: Item[]; allPosts: Item[] }) {
+  const confirm = useConfirm();
   const router = useRouter();
   const [items, setItems] = useState(posts);
   const [adding, setAdding] = useState("");
@@ -31,8 +37,15 @@ export default function HomePreviewManager({ posts, allPosts }: { posts: Item[];
     save(next);
   }
 
-  function remove(id: string) {
-    save(items.filter((i) => i.id !== id));
+  async function remove(item: Item) {
+    const ok = await confirm({
+      title: "Retirer cet article de l'accueil ?",
+      description: `« ${item.title} » ne sera plus affiché à la une de la page d'accueil (l'article lui-même n'est pas supprimé).`,
+      confirmLabel: "Retirer",
+      destructive: true,
+    });
+    if (!ok) return;
+    save(items.filter((i) => i.id !== item.id));
   }
 
   function add() {
@@ -46,55 +59,50 @@ export default function HomePreviewManager({ posts, allPosts }: { posts: Item[];
   const available = allPosts.filter((p) => !items.some((i) => i.id === p.id));
 
   return (
-    <div className="adm-card" style={{ marginBottom: 24 }}>
-      <h3 style={{ fontFamily: "Cormorant, serif", fontWeight: 500, fontSize: 18, marginTop: 0 }}>
-        Articles à la une de l&apos;accueil
-      </h3>
-      <p className="hint" style={{ marginBottom: 16 }}>
-        Jusqu&apos;à 3 articles, affichés dans cet ordre sur la page d&apos;accueil.
-      </p>
-      {items.length === 0 ? (
-        <div className="adm-empty">Aucun article sélectionné pour l&apos;accueil.</div>
-      ) : (
-        <div className="adm-order-list" style={{ marginBottom: 16 }}>
-          {items.map((item, i) => (
-            <div key={item.id} className="adm-order-row">
-              <span>{item.title}</span>
-              <div className="mv">
-                <button className="adm-btn sm" type="button" onClick={() => move(i, -1)} disabled={busy || i === 0}>
-                  ↑
-                </button>
-                <button
-                  className="adm-btn sm"
-                  type="button"
-                  onClick={() => move(i, 1)}
-                  disabled={busy || i === items.length - 1}
-                >
-                  ↓
-                </button>
-                <button className="adm-btn sm danger" type="button" onClick={() => remove(item.id)} disabled={busy}>
-                  Retirer
-                </button>
+    <Card>
+      <CardHeader className="flex-col items-start">
+        <CardTitle>Articles à la une de l&apos;accueil</CardTitle>
+        <CardDescription>Jusqu&apos;à 3 articles, affichés dans cet ordre sur la page d&apos;accueil.</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {items.length === 0 ? (
+          <p className="text-sm text-muted-foreground">Aucun article sélectionné pour l&apos;accueil.</p>
+        ) : (
+          <div className="space-y-2">
+            {items.map((item, i) => (
+              <div key={item.id} className="flex items-center justify-between rounded-lg border border-border px-4 py-2.5">
+                <span className="text-sm text-foreground">{item.title}</span>
+                <div className="flex items-center gap-1">
+                  <Button variant="ghost" size="icon" onClick={() => move(i, -1)} disabled={busy || i === 0} aria-label="Monter">
+                    <ArrowUp className="size-4" />
+                  </Button>
+                  <Button variant="ghost" size="icon" onClick={() => move(i, 1)} disabled={busy || i === items.length - 1} aria-label="Descendre">
+                    <ArrowDown className="size-4" />
+                  </Button>
+                  <Button variant="ghost" size="icon" onClick={() => remove(item)} disabled={busy} aria-label="Retirer">
+                    <X className="size-4" />
+                  </Button>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
-      {items.length < 3 && available.length > 0 && (
-        <div style={{ display: "flex", gap: 10 }}>
-          <select value={adding} onChange={(e) => setAdding(e.target.value)} style={{ flex: 1 }}>
-            <option value="">Choisir un article…</option>
-            {available.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.title}
-              </option>
             ))}
-          </select>
-          <button className="adm-btn" type="button" onClick={add} disabled={!adding || busy}>
-            Ajouter
-          </button>
-        </div>
-      )}
-    </div>
+          </div>
+        )}
+        {items.length < 3 && available.length > 0 && (
+          <div className="flex gap-2">
+            <Select value={adding} onChange={(e) => setAdding(e.target.value)} className="flex-1">
+              <option value="">Choisir un article…</option>
+              {available.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.title}
+                </option>
+              ))}
+            </Select>
+            <Button variant="outline" onClick={add} disabled={!adding || busy}>
+              Ajouter
+            </Button>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }

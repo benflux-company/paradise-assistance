@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import PageHeader from "@/components/admin/layout/PageHeader";
 import SettingsForm from "./SettingsForm";
 
 export const dynamic = "force-dynamic";
@@ -8,12 +9,7 @@ export default async function SettingsAdminPage() {
 
   return (
     <>
-      <div className="adm-head">
-        <div>
-          <h1>Paramètres</h1>
-          <p>Coordonnées, réseaux sociaux et options du formulaire de contact.</p>
-        </div>
-      </div>
+      <PageHeader title="Paramètres" description="Coordonnées, réseaux sociaux et options du formulaire de contact." />
       <SettingsForm
         initial={{
           phone: settings?.phone ?? "",

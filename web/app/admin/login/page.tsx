@@ -2,18 +2,21 @@
 
 import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { toast } from "sonner";
+import { Card, CardContent } from "@/components/admin/ui/Card";
+import { Input, Label, FieldGroup } from "@/components/admin/ui/Field";
+import Button from "@/components/admin/ui/Button";
+import Toaster from "@/components/admin/ui/Toaster";
 
 function LoginForm() {
   const router = useRouter();
   const params = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError("");
     setBusy(true);
     try {
       const res = await fetch("/api/admin/auth/login", {
@@ -23,54 +26,47 @@ function LoginForm() {
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        setError(data.error ?? "Impossible de se connecter.");
+        toast.error(data.error ?? "Impossible de se connecter.");
         setBusy(false);
         return;
       }
       router.push(params.get("next") ?? "/admin");
       router.refresh();
     } catch {
-      setError("Impossible de se connecter. Vérifiez votre connexion.");
+      toast.error("Impossible de se connecter. Vérifiez votre connexion.");
       setBusy(false);
     }
   }
 
   return (
-    <div className="adm-login">
-      <div className="adm-login-card">
-        <h1>Administration</h1>
-        <p className="sub">Ets Paradis Assistance</p>
-        <form className="adm-form" onSubmit={onSubmit}>
-          {error && <div className="adm-error">{error}</div>}
-          <div className="adm-field">
-            <label htmlFor="email">Email</label>
-            <input
-              id="email"
-              type="email"
-              required
-              autoComplete="username"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          <div className="adm-field">
-            <label htmlFor="password">Mot de passe</label>
-            <input
-              id="password"
-              type="password"
-              required
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-          <div className="adm-form-actions">
-            <button type="submit" className="adm-btn primary" disabled={busy}>
-              {busy ? "Connexion…" : "Se connecter"}
-            </button>
-          </div>
-        </form>
-      </div>
+    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+      <Card className="w-full max-w-sm">
+        <CardContent className="pt-8">
+          <h1 className="text-xl font-semibold text-foreground">Administration</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Ets Paradis Assistance</p>
+          <form className="mt-6 space-y-4" onSubmit={onSubmit}>
+            <FieldGroup>
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" type="email" required autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} />
+            </FieldGroup>
+            <FieldGroup>
+              <Label htmlFor="password">Mot de passe</Label>
+              <Input
+                id="password"
+                type="password"
+                required
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </FieldGroup>
+            <Button type="submit" loading={busy} className="w-full">
+              Se connecter
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+      <Toaster />
     </div>
   );
 }

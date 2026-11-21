@@ -1,21 +1,24 @@
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+import PageHeader from "@/components/admin/layout/PageHeader";
+import Button from "@/components/admin/ui/Button";
 import ProjectForm from "../ProjectForm";
 
 export default function NewProjectPage() {
   return (
     <>
-      <div className="adm-head">
-        <div>
-          <h1>Nouvelle réalisation</h1>
-          <p>Les photos se gèrent après la création.</p>
-        </div>
-        <Link href="/admin/projects" className="adm-btn">
-          Retour
-        </Link>
-      </div>
-      <div className="adm-card">
-        <ProjectForm />
-      </div>
+      <PageHeader
+        title="Nouvelle réalisation"
+        description="Les photos se gèrent après la création."
+        actions={
+          <Link href="/admin/projects">
+            <Button variant="outline">
+              <ArrowLeft className="size-4" /> Retour
+            </Button>
+          </Link>
+        }
+      />
+      <ProjectForm />
     </>
   );
 }

@@ -1,5 +1,8 @@
 import Link from "next/link";
+import { Plus } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import PageHeader from "@/components/admin/layout/PageHeader";
+import Button from "@/components/admin/ui/Button";
 import ProjectsTable from "./ProjectsTable";
 
 export const dynamic = "force-dynamic";
@@ -12,28 +15,28 @@ export default async function ProjectsAdminPage() {
 
   return (
     <>
-      <div className="adm-head">
-        <div>
-          <h1>Réalisations</h1>
-          <p>{projects.length} réalisation(s).</p>
-        </div>
-        <Link href="/admin/projects/new" className="adm-btn primary">
-          Nouvelle réalisation
-        </Link>
-      </div>
-      <div className="adm-card" style={{ padding: 0, overflowX: "auto" }}>
-        <ProjectsTable
-          projects={projects.map((p) => ({
-            id: p.id,
-            title: p.title,
-            slug: p.slug,
-            category: p.category,
-            featured: p.featured,
-            published: p.published,
-            cover: p.images[0]?.url ?? null,
-          }))}
-        />
-      </div>
+      <PageHeader
+        title="Réalisations"
+        description={`${projects.length} réalisation(s).`}
+        actions={
+          <Link href="/admin/projects/new">
+            <Button>
+              <Plus className="size-4" /> Nouvelle réalisation
+            </Button>
+          </Link>
+        }
+      />
+      <ProjectsTable
+        projects={projects.map((p) => ({
+          id: p.id,
+          title: p.title,
+          slug: p.slug,
+          category: p.category,
+          featured: p.featured,
+          published: p.published,
+          cover: p.images[0]?.url ?? null,
+        }))}
+      />
     </>
   );
 }

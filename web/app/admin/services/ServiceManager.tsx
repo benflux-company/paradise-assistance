@@ -1,7 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import ImageField from "../ImageField";
+import { toast } from "sonner";
+import { ArrowUp, ArrowDown, Pencil, Trash2, Plus } from "lucide-react";
+import { Card, CardContent } from "@/components/admin/ui/Card";
+import { Input, Textarea, Label, FieldGroup, FieldHint } from "@/components/admin/ui/Field";
+import Button from "@/components/admin/ui/Button";
+import Dropzone from "@/components/admin/ui/Dropzone";
+import { useConfirm } from "@/components/admin/ui/ConfirmDialog";
 
 type Service = { id: string; title: string; subtitle: string; description: string; items: string[]; image: string };
 type Draft = { title: string; subtitle: string; description: string; itemsText: string; image: string };
@@ -23,13 +29,13 @@ function fromDraft(d: Draft) {
 }
 
 export default function ServiceManager({ initial, uploadsEnabled }: { initial: Service[]; uploadsEnabled: boolean }) {
+  const confirm = useConfirm();
   const [items, setItems] = useState(initial);
   const [editing, setEditing] = useState<string | null>(null);
   const [draft, setDraft] = useState<Draft>(EMPTY);
   const [creating, setCreating] = useState(false);
   const [newDraft, setNewDraft] = useState<Draft>(EMPTY);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
 
   function startEdit(s: Service) {
     setEditing(s.id);
@@ -38,17 +44,17 @@ export default function ServiceManager({ initial, uploadsEnabled }: { initial: S
 
   async function saveEdit(id: string) {
     setBusy(true);
-    setError("");
     const payload = fromDraft(draft);
     const res = await fetch(`/api/admin/services/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
-    if (!res.ok) setError("Échec de l'enregistrement.");
+    if (!res.ok) toast.error("Échec de l'enregistrement.");
     else {
       setItems((prev) => prev.map((s) => (s.id === id ? { ...s, ...payload } : s)));
       setEditing(null);
+      toast.success("Prestation mise à jour.");
     }
     setBusy(false);
   }
@@ -57,28 +63,35 @@ export default function ServiceManager({ initial, uploadsEnabled }: { initial: S
     const payload = fromDraft(newDraft);
     if (!payload.title.trim() || !payload.subtitle.trim() || !payload.description.trim() || !payload.image.trim()) return;
     setBusy(true);
-    setError("");
     const res = await fetch("/api/admin/services", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
-    if (!res.ok) setError("Échec de la création.");
+    if (!res.ok) toast.error("Échec de la création.");
     else {
       const data = await res.json();
       setItems((prev) => [...prev, { id: data.service.id, ...payload }]);
       setNewDraft(EMPTY);
       setCreating(false);
+      toast.success("Prestation ajoutée.");
     }
     setBusy(false);
   }
 
-  async function remove(id: string) {
-    if (!confirm("Supprimer cette prestation ?")) return;
+  async function remove(s: Service) {
+    const ok = await confirm({
+      title: "Supprimer cette prestation ?",
+      description: `« ${s.title} » sera retirée définitivement de la page Prestations.`,
+      confirmLabel: "Supprimer",
+      destructive: true,
+    });
+    if (!ok) return;
     setBusy(true);
-    await fetch(`/api/admin/services/${id}`, { method: "DELETE" });
-    setItems((prev) => prev.filter((s) => s.id !== id));
+    await fetch(`/api/admin/services/${s.id}`, { method: "DELETE" });
+    setItems((prev) => prev.filter((item) => item.id !== s.id));
     setBusy(false);
+    toast.success("Prestation supprimée.");
   }
 
   async function move(index: number, dir: -1 | 1) {
@@ -96,91 +109,90 @@ export default function ServiceManager({ initial, uploadsEnabled }: { initial: S
 
   function renderForm(d: Draft, onSet: (next: Draft) => void) {
     return (
-      <div className="adm-form">
-        <div className="adm-field">
-          <label>Titre</label>
-          <input type="text" value={d.title} onChange={(e) => onSet({ ...d, title: e.target.value })} />
-        </div>
-        <div className="adm-field">
-          <label>Sous-titre</label>
-          <input type="text" value={d.subtitle} onChange={(e) => onSet({ ...d, subtitle: e.target.value })} />
-        </div>
-        <div className="adm-field">
-          <label>Description</label>
-          <textarea value={d.description} onChange={(e) => onSet({ ...d, description: e.target.value })} />
-        </div>
-        <div className="adm-field">
-          <label>Points clés</label>
-          <textarea value={d.itemsText} onChange={(e) => onSet({ ...d, itemsText: e.target.value })} />
-          <div className="hint">Un point par ligne.</div>
-        </div>
-        <ImageField label="Image" value={d.image} onChange={(url) => onSet({ ...d, image: url })} uploadsEnabled={uploadsEnabled} />
+      <div className="space-y-3">
+        <FieldGroup>
+          <Label>Titre</Label>
+          <Input value={d.title} onChange={(e) => onSet({ ...d, title: e.target.value })} />
+        </FieldGroup>
+        <FieldGroup>
+          <Label>Sous-titre</Label>
+          <Input value={d.subtitle} onChange={(e) => onSet({ ...d, subtitle: e.target.value })} />
+        </FieldGroup>
+        <FieldGroup>
+          <Label>Description</Label>
+          <Textarea value={d.description} onChange={(e) => onSet({ ...d, description: e.target.value })} />
+        </FieldGroup>
+        <FieldGroup>
+          <Label>Points clés</Label>
+          <Textarea value={d.itemsText} onChange={(e) => onSet({ ...d, itemsText: e.target.value })} />
+          <FieldHint>Un point par ligne.</FieldHint>
+        </FieldGroup>
+        <Dropzone label="Image" value={d.image} onChange={(url) => onSet({ ...d, image: url })} uploadsEnabled={uploadsEnabled} />
       </div>
     );
   }
 
   return (
-    <div className="adm-card">
-      {error && <div className="adm-error" style={{ marginBottom: 16 }}>{error}</div>}
-      {items.length === 0 && !creating && <div className="adm-empty">Aucune prestation pour le moment.</div>}
+    <Card>
+      <CardContent className="space-y-3">
+        {items.length === 0 && !creating && <p className="text-sm text-muted-foreground">Aucune prestation pour le moment.</p>}
 
-      <div className="adm-order-list">
         {items.map((s, i) =>
           editing === s.id ? (
-            <div key={s.id} className="adm-card" style={{ padding: 14 }}>
+            <div key={s.id} className="rounded-lg border border-border bg-muted/40 p-4">
               {renderForm(draft, setDraft)}
-              <div className="adm-form-actions" style={{ marginTop: 12 }}>
-                <button className="adm-btn primary" type="button" disabled={busy} onClick={() => saveEdit(s.id)}>
+              <div className="mt-3 flex gap-2">
+                <Button size="sm" loading={busy} onClick={() => saveEdit(s.id)}>
                   Enregistrer
-                </button>
-                <button className="adm-btn" type="button" onClick={() => setEditing(null)}>
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => setEditing(null)}>
                   Annuler
-                </button>
+                </Button>
               </div>
             </div>
           ) : (
-            <div key={s.id} className="adm-order-row" style={{ alignItems: "flex-start" }}>
-              <img src={s.image} alt="" style={{ width: 44, height: 44, objectFit: "cover", borderRadius: 6 }} />
-              <div style={{ flex: 1 }}>
-                <strong>{s.title}</strong>
-                <div style={{ color: "var(--adm-muted)", fontSize: 13, marginTop: 4 }}>{s.subtitle}</div>
+            <div key={s.id} className="flex items-start gap-4 rounded-lg border border-border p-4">
+              <img src={s.image} alt="" className="size-11 shrink-0 rounded-md object-cover" />
+              <div className="min-w-0 flex-1">
+                <div className="text-sm font-medium text-foreground">{s.title}</div>
+                <div className="mt-1 text-sm text-muted-foreground">{s.subtitle}</div>
               </div>
-              <div className="mv">
-                <button className="adm-btn sm" type="button" onClick={() => move(i, -1)} disabled={i === 0}>
-                  ↑
-                </button>
-                <button className="adm-btn sm" type="button" onClick={() => move(i, 1)} disabled={i === items.length - 1}>
-                  ↓
-                </button>
-                <button className="adm-btn sm" type="button" onClick={() => startEdit(s)}>
-                  Modifier
-                </button>
-                <button className="adm-btn sm danger" type="button" onClick={() => remove(s.id)} disabled={busy}>
-                  Supprimer
-                </button>
+              <div className="flex shrink-0 items-center gap-1">
+                <Button variant="ghost" size="icon" onClick={() => move(i, -1)} disabled={i === 0} aria-label="Monter">
+                  <ArrowUp className="size-4" />
+                </Button>
+                <Button variant="ghost" size="icon" onClick={() => move(i, 1)} disabled={i === items.length - 1} aria-label="Descendre">
+                  <ArrowDown className="size-4" />
+                </Button>
+                <Button variant="ghost" size="icon" onClick={() => startEdit(s)} aria-label="Modifier">
+                  <Pencil className="size-4" />
+                </Button>
+                <Button variant="ghost" size="icon" onClick={() => remove(s)} disabled={busy} aria-label="Supprimer">
+                  <Trash2 className="size-4 text-destructive" />
+                </Button>
               </div>
             </div>
           )
         )}
-      </div>
 
-      {creating ? (
-        <div className="adm-card" style={{ padding: 14, marginTop: 16 }}>
-          {renderForm(newDraft, setNewDraft)}
-          <div className="adm-form-actions" style={{ marginTop: 12 }}>
-            <button className="adm-btn primary" type="button" disabled={busy} onClick={create}>
-              Ajouter
-            </button>
-            <button className="adm-btn" type="button" onClick={() => setCreating(false)}>
-              Annuler
-            </button>
+        {creating ? (
+          <div className="rounded-lg border border-border bg-muted/40 p-4">
+            {renderForm(newDraft, setNewDraft)}
+            <div className="mt-3 flex gap-2">
+              <Button size="sm" loading={busy} onClick={create}>
+                Ajouter
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => setCreating(false)}>
+                Annuler
+              </Button>
+            </div>
           </div>
-        </div>
-      ) : (
-        <button className="adm-btn primary" type="button" style={{ marginTop: 16 }} onClick={() => setCreating(true)}>
-          Ajouter une prestation
-        </button>
-      )}
-    </div>
+        ) : (
+          <Button variant="outline" onClick={() => setCreating(true)}>
+            <Plus className="size-4" /> Ajouter une prestation
+          </Button>
+        )}
+      </CardContent>
+    </Card>
   );
 }

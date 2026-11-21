@@ -1,17 +1,23 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "sonner";
+import { ArrowUp, ArrowDown, Pencil, Trash2, Plus } from "lucide-react";
+import { Card, CardContent } from "@/components/admin/ui/Card";
+import { Input, Textarea, Label, FieldGroup } from "@/components/admin/ui/Field";
+import Button from "@/components/admin/ui/Button";
+import { useConfirm } from "@/components/admin/ui/ConfirmDialog";
 
 type Faq = { id: string; question: string; answer: string };
 
 export default function FaqManager({ initial }: { initial: Faq[] }) {
+  const confirm = useConfirm();
   const [items, setItems] = useState(initial);
   const [editing, setEditing] = useState<string | null>(null);
   const [draft, setDraft] = useState<{ question: string; answer: string }>({ question: "", answer: "" });
   const [creating, setCreating] = useState(false);
   const [newDraft, setNewDraft] = useState({ question: "", answer: "" });
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
 
   function startEdit(f: Faq) {
     setEditing(f.id);
@@ -20,17 +26,17 @@ export default function FaqManager({ initial }: { initial: Faq[] }) {
 
   async function saveEdit(id: string) {
     setBusy(true);
-    setError("");
     const res = await fetch(`/api/admin/faqs/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(draft),
     });
     if (!res.ok) {
-      setError("Échec de l'enregistrement.");
+      toast.error("Échec de l'enregistrement.");
     } else {
       setItems((prev) => prev.map((f) => (f.id === id ? { ...f, ...draft } : f)));
       setEditing(null);
+      toast.success("Question mise à jour.");
     }
     setBusy(false);
   }
@@ -38,29 +44,36 @@ export default function FaqManager({ initial }: { initial: Faq[] }) {
   async function createFaq() {
     if (!newDraft.question.trim() || !newDraft.answer.trim()) return;
     setBusy(true);
-    setError("");
     const res = await fetch("/api/admin/faqs", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newDraft),
     });
     if (!res.ok) {
-      setError("Échec de la création.");
+      toast.error("Échec de la création.");
     } else {
       const data = await res.json();
       setItems((prev) => [...prev, { id: data.faq.id, question: data.faq.question, answer: data.faq.answer }]);
       setNewDraft({ question: "", answer: "" });
       setCreating(false);
+      toast.success("Question ajoutée.");
     }
     setBusy(false);
   }
 
-  async function remove(id: string) {
-    if (!confirm("Supprimer cette question ?")) return;
+  async function remove(f: Faq) {
+    const ok = await confirm({
+      title: "Supprimer cette question ?",
+      description: `« ${f.question} » sera retirée définitivement de la FAQ du site.`,
+      confirmLabel: "Supprimer",
+      destructive: true,
+    });
+    if (!ok) return;
     setBusy(true);
-    await fetch(`/api/admin/faqs/${id}`, { method: "DELETE" });
-    setItems((prev) => prev.filter((f) => f.id !== id));
+    await fetch(`/api/admin/faqs/${f.id}`, { method: "DELETE" });
+    setItems((prev) => prev.filter((item) => item.id !== f.id));
     setBusy(false);
+    toast.success("Question supprimée.");
   }
 
   async function move(index: number, dir: -1 | 1) {
@@ -77,95 +90,79 @@ export default function FaqManager({ initial }: { initial: Faq[] }) {
   }
 
   return (
-    <div className="adm-card">
-      {error && <div className="adm-error" style={{ marginBottom: 16 }}>{error}</div>}
-      {items.length === 0 && !creating && <div className="adm-empty">Aucune question pour le moment.</div>}
+    <Card>
+      <CardContent className="space-y-3">
+        {items.length === 0 && !creating && <p className="text-sm text-muted-foreground">Aucune question pour le moment.</p>}
 
-      <div className="adm-order-list">
         {items.map((f, i) =>
           editing === f.id ? (
-            <div key={f.id} className="adm-card" style={{ padding: 14 }}>
-              <div className="adm-form">
-                <div className="adm-field">
-                  <label>Question</label>
-                  <input
-                    type="text"
-                    value={draft.question}
-                    onChange={(e) => setDraft((d) => ({ ...d, question: e.target.value }))}
-                  />
-                </div>
-                <div className="adm-field">
-                  <label>Réponse</label>
-                  <textarea value={draft.answer} onChange={(e) => setDraft((d) => ({ ...d, answer: e.target.value }))} />
-                </div>
-                <div className="adm-form-actions">
-                  <button className="adm-btn primary" type="button" disabled={busy} onClick={() => saveEdit(f.id)}>
-                    Enregistrer
-                  </button>
-                  <button className="adm-btn" type="button" onClick={() => setEditing(null)}>
-                    Annuler
-                  </button>
-                </div>
+            <div key={f.id} className="rounded-lg border border-border bg-muted/40 p-4 space-y-3">
+              <FieldGroup>
+                <Label>Question</Label>
+                <Input value={draft.question} onChange={(e) => setDraft((d) => ({ ...d, question: e.target.value }))} />
+              </FieldGroup>
+              <FieldGroup>
+                <Label>Réponse</Label>
+                <Textarea value={draft.answer} onChange={(e) => setDraft((d) => ({ ...d, answer: e.target.value }))} />
+              </FieldGroup>
+              <div className="flex gap-2">
+                <Button size="sm" loading={busy} onClick={() => saveEdit(f.id)}>
+                  Enregistrer
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => setEditing(null)}>
+                  Annuler
+                </Button>
               </div>
             </div>
           ) : (
-            <div key={f.id} className="adm-order-row" style={{ alignItems: "flex-start" }}>
-              <div style={{ flex: 1 }}>
-                <strong>{f.question}</strong>
-                <div style={{ color: "var(--adm-muted)", fontSize: 13, marginTop: 4 }}>{f.answer}</div>
+            <div key={f.id} className="flex items-start justify-between gap-4 rounded-lg border border-border p-4">
+              <div className="min-w-0 flex-1">
+                <div className="text-sm font-medium text-foreground">{f.question}</div>
+                <div className="mt-1 text-sm text-muted-foreground">{f.answer}</div>
               </div>
-              <div className="mv">
-                <button className="adm-btn sm" type="button" onClick={() => move(i, -1)} disabled={i === 0}>
-                  ↑
-                </button>
-                <button className="adm-btn sm" type="button" onClick={() => move(i, 1)} disabled={i === items.length - 1}>
-                  ↓
-                </button>
-                <button className="adm-btn sm" type="button" onClick={() => startEdit(f)}>
-                  Modifier
-                </button>
-                <button className="adm-btn sm danger" type="button" onClick={() => remove(f.id)} disabled={busy}>
-                  Supprimer
-                </button>
+              <div className="flex shrink-0 items-center gap-1">
+                <Button variant="ghost" size="icon" onClick={() => move(i, -1)} disabled={i === 0} aria-label="Monter">
+                  <ArrowUp className="size-4" />
+                </Button>
+                <Button variant="ghost" size="icon" onClick={() => move(i, 1)} disabled={i === items.length - 1} aria-label="Descendre">
+                  <ArrowDown className="size-4" />
+                </Button>
+                <Button variant="ghost" size="icon" onClick={() => startEdit(f)} aria-label="Modifier">
+                  <Pencil className="size-4" />
+                </Button>
+                <Button variant="ghost" size="icon" onClick={() => remove(f)} disabled={busy} aria-label="Supprimer">
+                  <Trash2 className="size-4 text-destructive" />
+                </Button>
               </div>
             </div>
           )
         )}
-      </div>
 
-      {creating ? (
-        <div className="adm-card" style={{ padding: 14, marginTop: 16 }}>
-          <div className="adm-form">
-            <div className="adm-field">
-              <label>Question</label>
-              <input
-                type="text"
-                value={newDraft.question}
-                onChange={(e) => setNewDraft((d) => ({ ...d, question: e.target.value }))}
-              />
-            </div>
-            <div className="adm-field">
-              <label>Réponse</label>
-              <textarea
-                value={newDraft.answer}
-                onChange={(e) => setNewDraft((d) => ({ ...d, answer: e.target.value }))}
-              />
-            </div>
-            <div className="adm-form-actions">
-              <button className="adm-btn primary" type="button" disabled={busy} onClick={createFaq}>
+        {creating ? (
+          <div className="rounded-lg border border-border bg-muted/40 p-4 space-y-3">
+            <FieldGroup>
+              <Label>Question</Label>
+              <Input value={newDraft.question} onChange={(e) => setNewDraft((d) => ({ ...d, question: e.target.value }))} />
+            </FieldGroup>
+            <FieldGroup>
+              <Label>Réponse</Label>
+              <Textarea value={newDraft.answer} onChange={(e) => setNewDraft((d) => ({ ...d, answer: e.target.value }))} />
+            </FieldGroup>
+            <div className="flex gap-2">
+              <Button size="sm" loading={busy} onClick={createFaq}>
                 Ajouter
-              </button>
-              <button className="adm-btn" type="button" onClick={() => setCreating(false)}>
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => setCreating(false)}>
                 Annuler
-              </button>
+              </Button>
             </div>
           </div>
-        </div>
-      ) : (
-        <button className="adm-btn primary" type="button" style={{ marginTop: 16 }} onClick={() => setCreating(true)}>
-          Ajouter une question
-        </button>
-      )}
-    </div>
+        ) : (
+          <Button variant="outline" onClick={() => setCreating(true)}>
+            <Plus className="size-4" /> Ajouter une question
+          </Button>
+        )}
+      </CardContent>
+    </Card>
   );
 }
